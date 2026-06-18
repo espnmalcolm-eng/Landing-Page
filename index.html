@@ -398,11 +398,16 @@
     <div class="form" id="form-hero">
       <!-- honeypot: bots fill this, humans don't -->
       <input class="hp-field" type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
-      <input type="tel" inputmode="tel" placeholder="+1 (203) 555-0142" aria-label="Phone number" autocomplete="tel">
+      <input type="text" name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required>
+      <input type="text" name="field" placeholder="Field of work" aria-label="Field of work" autocomplete="organization-title" required>
+      <small style="width:100%;font-size:11px;color:var(--cream-faint);letter-spacing:.04em">Phone preferred — we'll text you first</small>
+      <input type="tel" inputmode="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel">
+      <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email">
+      <p class="form-err" style="display:none;width:100%;margin:0;font-size:13px;color:#c0563f">Please add a phone number or email so we can reach you.</p>
       <button class="btn">Request your invite</button>
     </div>
     <p class="form-note">Founding members get first access to <b>The Room</b> — by text, the moment it opens.</p>
-    <p class="form-note" style="opacity:.55;margin-top:6px">By submitting, you agree to receive text updates from Leverage BLK. Msg &amp; data rates may apply. Reply STOP to opt out. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p class="form-note" style="opacity:.55;margin-top:6px">By joining, you agree to receive updates from LeverageBLK by text or email. Msg &amp; data rates may apply. Reply STOP to opt out.</p>
 
     <div class="success" id="ok-hero">
       <h4>You're on the list.</h4>
@@ -523,11 +528,16 @@
       <div class="form" id="form-finale">
         <!-- honeypot: bots fill this, humans don't -->
         <input class="hp-field" type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
-        <input type="tel" inputmode="tel" placeholder="+1 (203) 555-0142" aria-label="Phone number" autocomplete="tel">
+        <input type="text" name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required>
+        <input type="text" name="field" placeholder="Field of work" aria-label="Field of work" autocomplete="organization-title" required>
+        <small style="width:100%;font-size:11px;color:var(--cream-faint);letter-spacing:.04em">Phone preferred — we'll text you first</small>
+        <input type="tel" inputmode="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel">
+        <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email">
+        <p class="form-err" style="display:none;width:100%;margin:0;font-size:13px;color:#c0563f">Please add a phone number or email so we can reach you.</p>
         <button class="btn">Join the waitlist</button>
       </div>
       <p class="form-note" style="text-align:center">Where Your Culture Is Your Credential.</p>
-      <p class="form-note" style="text-align:center;opacity:.55;margin-top:6px">By submitting, you agree to receive text updates from Leverage BLK. Msg &amp; data rates may apply. Reply STOP to opt out. See our <a href="privacy.html">Privacy Policy</a>.</p>
+      <p class="form-note" style="text-align:center;opacity:.55;margin-top:6px">By joining, you agree to receive updates from LeverageBLK by text or email. Msg &amp; data rates may apply. Reply STOP to opt out.</p>
 
       <div class="success" id="ok-finale" style="margin-left:auto;margin-right:auto">
         <h4>You're in line.</h4>
@@ -600,34 +610,61 @@
 </script>
 
 <script>
-  // ---- waitlist capture (client-side demo) ----
-  // To go live, wire this to Supabase:
-  //   await supabase.from('waitlist').insert({ phone, source });
+  // ---- waitlist capture ----
   function isPhone(v){
     const digits = v.replace(/\D/g,'');
     return digits.length >= 10 && digits.length <= 15;
   }
+  function isEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  }
   function bind(formId, okId, source){
-    const form=document.getElementById(formId);
-    const ok=document.getElementById(okId);
-    const honeypot=form.querySelector('.hp-field');
-    const input=form.querySelector('input[type="tel"]');
-    const btn=form.querySelector('button');
+    const form    = document.getElementById(formId);
+    const ok      = document.getElementById(okId);
+    const honeypot= form.querySelector('.hp-field');
+    const nameEl  = form.querySelector('input[name="name"]');
+    const fieldEl = form.querySelector('input[name="field"]');
+    const phoneEl = form.querySelector('input[type="tel"]');
+    const emailEl = form.querySelector('input[type="email"]');
+    const btn     = form.querySelector('button');
+    const errEl   = form.querySelector('.form-err');
+    const inputs  = [nameEl, fieldEl, phoneEl, emailEl].filter(Boolean);
+
+    function clearErrors(){
+      inputs.forEach(i => { i.style.borderColor = ''; });
+      if(errEl) errEl.style.display = 'none';
+    }
+
     async function submit(){
-      // Honeypot check — bots fill hidden fields, humans don't
-      if(honeypot && honeypot.value){ return; /* silently reject */ }
-      if(!isPhone(input.value)){
-        input.style.borderColor='#c0563f';
-        input.focus();
-        return;
-      }
+      clearErrors();
+      if(honeypot && honeypot.value){ return; }
+
+      let valid = true;
+      let firstInvalid = null;
+      function flag(el){ el.style.borderColor = '#c0563f'; if(!firstInvalid) firstInvalid = el; valid = false; }
+
+      if(!nameEl.value.trim())  flag(nameEl);
+      if(!fieldEl.value.trim()) flag(fieldEl);
+
+      const phoneVal = phoneEl.value.trim();
+      const emailVal = emailEl.value.trim();
+      if(phoneVal && !isPhone(phoneVal)) flag(phoneEl);
+      if(emailVal && !isEmail(emailVal)) flag(emailEl);
+      if(!phoneVal && !emailVal){ if(errEl) errEl.style.display = 'block'; valid = false; }
+
+      if(!valid){ if(firstInvalid) firstInvalid.focus(); return; }
+
       btn.disabled = true;
       btn.textContent = 'Saving…';
+      const name  = nameEl.value.trim();
+      const field = fieldEl.value.trim();
+      const phone = phoneVal || null;
+      const email = emailVal || null;
       try {
         const { error } = await window.supabase
           .from('waitlist')
-          .insert({ phone: input.value, source });
-        // 23505 = unique_violation (already signed up) — treat as success
+          .insert({ name, phone, email, field, source });
+        // 23505 = unique_violation — treat as success
         if(error && error.code !== '23505'){
           console.error('Supabase error:', error);
           btn.disabled = false;
@@ -640,16 +677,19 @@
         btn.textContent = source === 'hero' ? 'Request your invite' : 'Join the waitlist';
         return;
       }
-      window.trackEvent('waitlist_signup', {source});
-      form.style.display='none';
+      window.trackEvent('waitlist_signup', { source, field });
+      form.style.display = 'none';
       ok.classList.add('show');
     }
-    btn.addEventListener('click',submit);
-    input.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
-    input.addEventListener('input',()=>input.style.borderColor='');
+
+    btn.addEventListener('click', submit);
+    inputs.forEach(input => {
+      input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+      input.addEventListener('input', () => { input.style.borderColor = ''; });
+    });
   }
-  bind('form-hero','ok-hero','hero');
-  bind('form-finale','ok-finale','finale');
+  bind('form-hero',   'ok-hero',   'hero');
+  bind('form-finale', 'ok-finale', 'finale');
 
   // ---- advocate video reels ----
   // Each entry: name, role, thumb (thumbnail image), src (video).
