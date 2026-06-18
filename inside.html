@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+<title>Leverage BLK — What You're Getting In</title>
+<meta name="description" content="Inside Leverage BLK: Circles, Playbooks, and the unwritten rules of getting ahead — finally written down.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-2:#121110;
+    --ink-3:#1A1714;
+    --gold:#C9A84C;
+    --gold-soft:rgba(201,168,76,.18);
+    --gold-line:rgba(201,168,76,.28);
+    --cream:#FAF9F6;
+    --cream-dim:rgba(250,249,246,.62);
+    --cream-faint:rgba(250,249,246,.34);
+    --display:"Clash Display","Plus Jakarta Sans",sans-serif;
+    --body:"Plus Jakarta Sans",system-ui,sans-serif;
+    --maxw:1180px;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* grain + atmosphere */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(201,168,76,.10), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(201,168,76,.06), transparent 55%);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---- type ---- */
+  h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.02;letter-spacing:-.02em}
+  .eyebrow{
+    font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.7}
+  .sec-no{
+    font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.3em;color:var(--gold);
+    -webkit-text-stroke:0;opacity:.85;
+  }
+
+  /* ---- nav ---- */
+  header{position:absolute;top:0;left:0;right:0;z-index:5}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding-top:26px;padding-bottom:26px}
+  .brand{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.02em;color:var(--cream);text-decoration:none}
+  .brand b{color:var(--gold)}
+  .nav a.cta-ghost{
+    font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--cream);text-decoration:none;
+    border:1px solid var(--gold-line);padding:10px 18px;border-radius:999px;transition:.25s;
+  }
+  .nav a.cta-ghost:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .nav-left{display:flex;align-items:center;gap:22px}
+  .back-link{
+    font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--cream-dim);
+    text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color .25s,gap .25s;
+  }
+  .back-link::before{content:"←";color:var(--gold);transition:transform .25s var(--ease)}
+  .back-link:hover{color:var(--cream)}
+  .back-link:hover::before{transform:translateX(-3px)}
+
+  /* ---- buttons ---- */
+  .btn{
+    background:var(--gold);color:var(--ink);font-family:var(--body);font-weight:700;font-size:15px;
+    letter-spacing:.01em;border:none;padding:16px 26px;border-radius:12px;cursor:pointer;
+    position:relative;overflow:hidden;transition:transform .2s,box-shadow .25s;white-space:nowrap;
+    text-decoration:none;display:inline-block;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 38px -14px rgba(201,168,76,.7)}
+  .btn::after{content:"";position:absolute;top:0;left:-130%;width:60%;height:100%;
+    background:linear-gradient(110deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg)}
+  .btn:hover::after{animation:shine .8s ease}
+  @keyframes shine{to{left:140%}}
+  .btn-ghost{
+    background:transparent;color:var(--cream);border:1px solid var(--gold-line);
+    font-weight:600;box-shadow:none;
+  }
+  .btn-ghost:hover{background:var(--gold-soft);border-color:var(--gold);box-shadow:none}
+  .btn-ghost::after{display:none}
+
+  /* ---- open / hero shell ---- */
+  .open{min-height:100svh;display:flex;align-items:center;padding:150px 0 90px;position:relative;overflow:clip}
+  .open h1{font-size:clamp(2.5rem,6.2vw,5rem);margin:30px 0 0;max-width:17ch}
+  .open h1 .gold{color:var(--gold)}
+  .open .sub{font-size:clamp(1rem,1.5vw,1.16rem);color:var(--cream-dim);max-width:54ch;margin:30px 0 0;font-weight:300}
+  .open .sub b{color:var(--cream);font-weight:500}
+  .scrollcue{
+    margin-top:46px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--cream-faint);font-weight:600;display:inline-flex;align-items:center;gap:12px;
+  }
+  .scrollcue::after{content:"";width:46px;height:1px;background:var(--gold-line)}
+
+  /* ---- section shell ---- */
+  section.block{padding:clamp(80px,11vh,140px) 0;position:relative}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold-line),transparent);width:100%}
+  .lead-head{font-size:clamp(2rem,4.4vw,3.4rem);max-width:20ch;margin:22px 0 0}
+  .lead-head .gold{color:var(--gold)}
+  .sec-intro{margin-top:36px}
+  .sec-body{color:var(--cream-dim);font-size:1.05rem;font-weight:300;margin-top:24px;max-width:60ch}
+  .sec-body strong{color:var(--cream);font-weight:600}
+  .sec-body em{color:var(--gold);font-style:normal;font-weight:500}
+
+  /* ---- network field + line field (shared techniques) ---- */
+  .net-field{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .line-field{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+  .line-field path{
+    stroke:var(--gold);stroke-width:.08;fill:none;
+    stroke-opacity:0;
+    stroke-dasharray:1;stroke-dashoffset:1;
+    transition:stroke-dashoffset 1.3s var(--ease),stroke-opacity 1.3s var(--ease);
+  }
+  .line-field.in path{stroke-dashoffset:0;stroke-opacity:.13}
+  .line-field.in path:nth-child(2){transition-delay:.12s}
+  .line-field.in path:nth-child(3){transition-delay:.24s}
+  .line-field.in path:nth-child(4){transition-delay:.36s}
+  .line-field.in path:nth-child(5){transition-delay:.48s}
+  .line-field.in path:nth-child(6){transition-delay:.6s}
+
+  /* ---- 03 · Circle constellation ---- */
+  .constellation{
+    position:relative;margin-top:60px;height:clamp(420px,48vw,560px);
+  }
+  .constellation .line-field path{stroke-width:.16}
+  .constellation .line-field.in path{stroke-opacity:.22}
+  .const-node{
+    position:absolute;transform:translate(-50%,-50%) translate3d(var(--px,0px),var(--py,0px),0) scale(.9);
+    border:1px solid var(--gold-line);border-radius:14px;
+    background:rgba(250,249,246,.04);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    padding:14px 18px;text-align:center;box-shadow:0 18px 44px -28px rgba(0,0,0,.9);
+    opacity:0;filter:blur(12px);
+    transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);
+    z-index:2;
+  }
+  .const-node.in{opacity:1;transform:translate(-50%,-50%) translate3d(var(--px,0px),var(--py,0px),0) scale(1);filter:blur(0)}
+  .const-node .cn-label{font-family:var(--display);font-weight:500;font-size:1rem;color:var(--cream);white-space:nowrap}
+  .const-node .cn-detail{font-size:.68rem;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-top:5px}
+  /* central "your room" node — larger + brighter */
+  .const-node.center{
+    background:linear-gradient(160deg,rgba(201,168,76,.16),rgba(250,249,246,.04));
+    border-color:var(--gold);padding:20px 26px;z-index:3;
+    box-shadow:0 0 0 1px var(--gold-soft),0 26px 60px -30px rgba(201,168,76,.6);
+  }
+  .const-node.center .cn-label{font-size:1.18rem;color:var(--cream)}
+  .const-node.center .cn-detail{color:var(--cream-dim)}
+  /* stagger the radiating nodes in after the center */
+  .const-node:nth-child(2){transition-delay:.18s}
+  .const-node:nth-child(3){transition-delay:.30s}
+  .const-node:nth-child(4){transition-delay:.42s}
+  .const-node:nth-child(5){transition-delay:.54s}
+  .const-node:nth-child(6){transition-delay:.66s}
+
+  /* ---- 04 · Playbooks triptych ---- */
+  .triptych{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
+  .pb-card{
+    border:1px solid var(--gold-line);border-radius:20px;padding:32px 28px;background:var(--ink-2);
+    position:relative;transition:.3s;overflow:hidden;
+  }
+  .pb-card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,rgba(201,168,76,.10),transparent 60%);opacity:0;transition:.3s}
+  .pb-card:hover{transform:translateY(-6px);border-color:var(--gold)}
+  .pb-card:hover::before{opacity:1}
+  .pb-card .pb-move{font-family:var(--display);font-size:13px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);opacity:.85}
+  .pb-card h3{font-size:1.5rem;margin:14px 0 14px;color:var(--cream)}
+  .pb-card ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:4px}
+  .pb-card li{font-size:.95rem;color:var(--cream-dim);font-weight:300;padding-left:20px;position:relative;line-height:1.45}
+  .pb-card li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:1px;background:var(--gold)}
+  .pb-card .pb-frame{margin-top:22px;font-size:.86rem;color:var(--cream-faint);font-weight:300;border-top:1px solid var(--gold-line);padding-top:16px;line-height:1.5}
+  .triptych .reveal:nth-child(2){transition-delay:.14s}
+  .triptych .reveal:nth-child(3){transition-delay:.28s}
+  .pb-tail{color:var(--cream-dim);font-size:1.02rem;font-weight:300;margin-top:42px;max-width:58ch}
+  .pb-tail strong{color:var(--cream);font-weight:600}
+
+  /* ---- 05 · Close ---- */
+  .close{
+    border:1px solid var(--gold-line);border-radius:28px;padding:clamp(44px,6vw,76px);
+    background:linear-gradient(160deg,var(--ink-3),var(--ink-2));position:relative;overflow:hidden;text-align:center;
+  }
+  .close::after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle,rgba(201,168,76,.16),transparent 65%);top:-220px;right:-120px;pointer-events:none}
+  .close h2{font-size:clamp(2.1rem,4.6vw,3.4rem);position:relative;max-width:18ch;margin:0 auto}
+  .close h2 .gold{color:var(--gold)}
+  .close .close-body{color:var(--cream-dim);margin:22px auto 0;max-width:50ch;font-weight:300;position:relative}
+  .close .cta-row{margin-top:36px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
+  /* reputation tiers */
+  .tiers{
+    margin:46px auto 0;position:relative;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;
+    justify-content:center;border:1px solid var(--gold-line);border-radius:999px;padding:14px 26px;
+    background:rgba(250,249,246,.03);
+  }
+  .tiers .tier{font-family:var(--display);font-weight:500;font-size:.98rem;color:var(--cream)}
+  .tiers .arr{color:var(--gold);font-size:.85rem}
+  .tiers .more{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-faint);font-weight:600;margin-left:4px}
+  /* feature-request reveal — only surfaces with this section */
+  .feature-ask{
+    margin:40px auto 0;position:relative;max-width:46ch;
+    border-top:1px solid var(--gold-line);padding-top:30px;
+  }
+  .feature-ask p{color:var(--cream-faint);font-size:.92rem;font-weight:300;margin-bottom:14px}
+  .feature-ask a{
+    color:var(--gold);text-decoration:none;font-weight:600;font-size:1.02rem;letter-spacing:.01em;
+    border-bottom:1px solid var(--gold-line);padding-bottom:2px;transition:.25s;
+  }
+  .feature-ask a:hover{border-color:var(--gold)}
+
+  /* ---- footer ---- */
+  footer{padding:60px 0 50px;border-top:1px solid var(--gold-line);margin-top:clamp(60px,9vh,120px)}
+  .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
+  .foot .brand{font-size:24px}
+  .foot .tagline{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:8px;font-weight:600}
+  .foot .meta{font-size:13px;color:var(--cream-faint);text-align:right;line-height:1.9}
+  .foot .meta b{color:var(--cream-dim);font-weight:500}
+  .foot .meta a{color:var(--cream-faint);text-decoration:none}
+  .foot .meta a:hover{color:var(--gold)}
+
+  /* ---- intro sequence ---- */
+  .intro{
+    position:fixed;inset:0;z-index:100;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;pointer-events:none;
+  }
+  .intro.done{display:none}
+  .intro-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .intro-ring{
+    position:absolute;border:1px solid var(--gold);border-radius:50%;
+    width:240px;height:240px;opacity:0;
+    animation:introRing 2.2s var(--ease) forwards;
+  }
+  .intro-ring:nth-child(2){animation-delay:.12s}
+  .intro-ring:nth-child(3){animation-delay:.24s}
+  @keyframes introRing{
+    0%{opacity:0;transform:scale(.15)}
+    45%{opacity:.4}
+    100%{opacity:0;transform:scale(1.4)}
+  }
+  .intro-wordmark{
+    font-family:var(--display);font-weight:600;font-size:clamp(2.2rem,7vw,4rem);
+    letter-spacing:.02em;color:var(--cream);position:relative;z-index:1;
+    opacity:0;transform:scale(.92);
+    will-change:transform,opacity;
+    transition:transform 1s var(--ease),opacity .8s var(--ease);
+  }
+  .intro-wordmark.show{opacity:1;transform:scale(1)}
+  .intro-wordmark b{color:var(--gold)}
+  .brand.intro-pending{opacity:0}
+
+  /* ---- page exit transition (cross-page nav) ---- */
+  .page-exit{
+    position:fixed;inset:0;z-index:200;background:var(--ink);
+    opacity:0;pointer-events:none;transition:opacity .45s var(--ease);
+  }
+  .page-exit.active{opacity:1}
+
+  /* ---- reveal ---- */
+  .reveal{opacity:0;transform:translateY(26px);filter:blur(14px);transition:opacity .8s ease,transform .8s var(--ease),filter .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none;filter:blur(0)}
+  @keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  @media(prefers-reduced-motion:reduce){
+    .intro{display:none}
+    .brand.intro-pending{opacity:1}
+    .reveal{opacity:1;transform:none;filter:none;transition:none}
+    .line-field path{stroke-dashoffset:0;stroke-opacity:.13;transition:none}
+    .const-node{opacity:1;transform:translate(-50%,-50%);filter:none;transition:none}
+    .intro-wordmark{transition:none}
+    .page-exit{transition:none}
+  }
+
+  @media(max-width:860px){
+    .triptych{grid-template-columns:1fr}
+    .nav a.cta-ghost{display:none}
+    .foot{flex-direction:column;align-items:flex-start}
+    .foot .meta{text-align:left}
+  }
+  /* constellation collapses to a readable stack on narrow screens */
+  @media(max-width:760px){
+    .constellation{height:auto;display:flex;flex-direction:column;gap:14px;margin-top:40px}
+    .constellation .line-field{display:none}
+    .const-node{position:static;transform:none;width:100%;text-align:left;filter:none}
+    .const-node.in{transform:none}
+    .const-node.center{order:-1}
+    .tiers{border-radius:18px}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="page-exit" id="page-exit" aria-hidden="true"></div>
+
+<!-- intro sequence (skipped on prefers-reduced-motion) -->
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-rings">
+    <span class="intro-ring"></span>
+    <span class="intro-ring"></span>
+    <span class="intro-ring"></span>
+  </div>
+  <div class="intro-wordmark" id="intro-wordmark">Leverage<b>BLK</b></div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <div class="nav-left">
+      <a href="index.html" class="back-link" data-transition data-track="inside_back">Back</a>
+      <a href="index.html" class="brand intro-pending" id="nav-brand" data-transition>Leverage<b>BLK</b></a>
+    </div>
+    <a href="index.html#waitlist" class="cta-ghost" data-track="nav_invite" data-transition>Request your invite</a>
+  </div>
+</header>
+
+<!-- OPEN · why we're building this -->
+<section class="open">
+  <canvas class="net-field" data-density="600"></canvas>
+  <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <path pathLength="1" d="M-2,26 L32,8 L66,40 L101,16"/>
+    <path pathLength="1" d="M0,64 L38,84 L70,56 L100,82"/>
+    <path pathLength="1" d="M10,98 L42,70 L74,96 L99,66"/>
+    <path pathLength="1" d="M4,46 L40,30 L72,64 L98,34"/>
+    <path pathLength="1" d="M22,2 L50,38 L78,10 L96,46"/>
+  </svg>
+  <div class="wrap">
+    <span class="eyebrow">Why we're building this</span>
+    <h1>The unwritten rules of getting ahead were never written down. <span class="gold">We're writing them down.</span></h1>
+    <p class="sub">Entry-level postings have fallen sharply since 2023 — some tech roles by two-thirds. AI screening filters most resumes before a human ever sees them. The jobs that remain increasingly go to <b>whoever's in the room</b>, not whoever applied. That's true whether you went to an HBCU, a PWI, or skipped the degree entirely.</p>
+    <div class="scrollcue">What you're getting in</div>
+  </div>
+</section>
+
+<!-- 03 · CIRCLES -->
+<section class="block" id="circles">
+  <canvas class="net-field" data-density="420"></canvas>
+  <div class="wrap">
+    <div class="rule reveal"></div>
+    <div class="sec-intro reveal">
+      <span class="sec-no">03 — Circles</span>
+      <h2 class="lead-head">Find your people. By industry. By city. By background — <span class="gold">or no background at all.</span></h2>
+    </div>
+    <p class="sec-body reveal">Inside, you'll find Circles for your industry, your city, the school you went to — or the one you didn't. HBCU, PWI, bootcamp, military, self-taught, no degree at all: <strong>the work is the credential.</strong> Circles aren't a directory. They're rooms — for tech, for finance, for law and policy, for founders, for creative and media, and for whatever you bring that doesn't fit a category yet.</p>
+
+    <!-- Circle constellation: central "your room" node + 5 radiating category nodes -->
+    <div class="constellation" aria-hidden="true">
+      <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+        <path pathLength="1" d="M50,50 L16,22"/>
+        <path pathLength="1" d="M50,50 L83,18"/>
+        <path pathLength="1" d="M50,50 L88,62"/>
+        <path pathLength="1" d="M50,50 L19,77"/>
+        <path pathLength="1" d="M50,50 L73,85"/>
+      </svg>
+      <div class="const-node center" style="left:50%;top:50%" data-depth="8">
+        <div class="cn-label">Your room</div>
+        <div class="cn-detail">where you belong in</div>
+      </div>
+      <div class="const-node" style="left:16%;top:22%" data-depth="20">
+        <div class="cn-label">Tech</div>
+        <div class="cn-detail">Circle</div>
+      </div>
+      <div class="const-node" style="left:83%;top:18%" data-depth="-24">
+        <div class="cn-label">Finance</div>
+        <div class="cn-detail">Circle</div>
+      </div>
+      <div class="const-node" style="left:88%;top:62%" data-depth="28">
+        <div class="cn-label">Law &amp; Policy</div>
+        <div class="cn-detail">Circle</div>
+      </div>
+      <div class="const-node" style="left:19%;top:77%" data-depth="-18">
+        <div class="cn-label">Founders</div>
+        <div class="cn-detail">Circle</div>
+      </div>
+      <div class="const-node" style="left:73%;top:85%" data-depth="22">
+        <div class="cn-label">Creative &amp; Media</div>
+        <div class="cn-detail">Circle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · PLAYBOOKS -->
+<section class="block" id="playbooks">
+  <canvas class="net-field" data-density="380"></canvas>
+  <div class="wrap">
+    <div class="rule reveal"></div>
+    <div class="sec-intro reveal">
+      <span class="sec-no">04 — Playbooks</span>
+      <h2 class="lead-head">The unwritten rules, <span class="gold">finally written down.</span></h2>
+    </div>
+    <p class="sec-body reveal">Every Playbook starts from the same place — nine fundamentals, grouped into three moves.</p>
+
+    <div class="triptych">
+      <div class="pb-card reveal">
+        <span class="pb-move">Move 01</span>
+        <h3>Show up right</h3>
+        <ul>
+          <li>The first impression</li>
+          <li>Reading the room</li>
+          <li>Dressing for it</li>
+        </ul>
+        <p class="pb-frame">Showing up as yourself, deliberately.</p>
+      </div>
+      <div class="pb-card reveal">
+        <span class="pb-move">Move 02</span>
+        <h3>Build what lasts</h3>
+        <ul>
+          <li>The follow-up that actually works</li>
+          <li>Sponsorship over mentorship</li>
+          <li>The office politics nobody explains</li>
+        </ul>
+        <p class="pb-frame">The relationships that move you forward.</p>
+      </div>
+      <div class="pb-card reveal">
+        <span class="pb-move">Move 03</span>
+        <h3>Get what you're owed</h3>
+        <ul>
+          <li>Code-switching strategically — not erasing yourself, knowing which register works in which room, and never apologizing for either</li>
+          <li>The cold DM that gets a reply</li>
+          <li>Negotiating without apology</li>
+        </ul>
+        <p class="pb-frame">Confidence that doesn't require permission.</p>
+      </div>
+    </div>
+
+    <p class="pb-tail reveal">From there, Playbooks go deep on your world. <strong>The Wealth Room.</strong> <strong>The Term Sheet Playbook.</strong> More, by field, as Circles take shape.</p>
+  </div>
+</section>
+
+<!-- 05 · CLOSE -->
+<section class="block" id="legacy">
+  <div class="wrap">
+    <div class="close reveal">
+      <canvas class="net-field" data-density="450"></canvas>
+      <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <path pathLength="1" d="M-2,30 L34,12 L68,44 L101,20"/>
+        <path pathLength="1" d="M2,70 L36,88 L72,60 L99,84"/>
+        <path pathLength="1" d="M14,4 L46,36 L74,10 L98,42"/>
+        <path pathLength="1" d="M0,52 L34,34 L70,62 L101,32"/>
+      </svg>
+
+      <span class="eyebrow" style="justify-content:center">Get in early</span>
+      <h2 style="margin-top:18px">This is what <span class="gold">Legacy members</span> are part of.</h2>
+      <p class="close-body">Everything here — every Circle, every Playbook, every Co-Sign — is what we're building toward, starting with the people who join first. Legacy membership isn't a discount. It's a seat at the table while the table's still being built.</p>
+
+      <div class="cta-row">
+        <a href="index.html#waitlist" class="btn" data-track="cta_click" data-target="waitlist" data-transition>Get on the founding waitlist →</a>
+      </div>
+
+      <!-- reputation tiers: Connector → Networker → Authority (open-ended) -->
+      <div class="tiers">
+        <span class="tier">Connector</span><span class="arr">→</span>
+        <span class="tier">Networker</span><span class="arr">→</span>
+        <span class="tier">Authority</span>
+        <span class="more">more to come</span>
+      </div>
+
+      <!-- feature-request reveal — only surfaces as this final section reveals -->
+      <div class="feature-ask">
+        <p>Got an idea for what should be in here?</p>
+        <a href="mailto:leverageblk@gmail.com?subject=Feature%20Request" data-track="cta_click" data-target="feature_board">Tell us →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a href="index.html" class="brand" data-transition>Leverage<b style="color:var(--gold)">BLK</b></a>
+      <div class="tagline">Real connections, real leverage</div>
+    </div>
+    <div class="meta">
+      <div>Founded by <b>Malcolm</b> &amp; <b>David Butler</b></div>
+      <div><a href="index.html" data-transition>Back to the waitlist</a> · Founding beta · 2026</div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  // ---- Firebase Analytics scaffold (mirrors index.html) ----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
+  };
+
+  let analytics = null;
+  try{
+    if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY"){
+      const app = initializeApp(firebaseConfig);
+      analytics = getAnalytics(app);
+      logEvent(analytics,'page_view',{page_title:'inside'});
+    }
+  }catch(e){ console.warn('Firebase Analytics not configured yet:', e); }
+
+  window.trackEvent = (name, params={}) => {
+    if(analytics) logEvent(analytics, name, params);
+    else console.log('[track]', name, params);
+  };
+</script>
+
+<script>
+  // ---- generic CTA tracking (includes data-target where present) ----
+  document.querySelectorAll('[data-track]').forEach(el=>{
+    el.addEventListener('click',()=> window.trackEvent(el.dataset.track, {
+      href: el.getAttribute('href'),
+      ...(el.dataset.target ? {target: el.dataset.target} : {})
+    }));
+  });
+
+  // ---- cross-page transition: fade to ink before navigating ----
+  (function(){
+    const exit = document.getElementById('page-exit');
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('a[data-transition]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const href = a.getAttribute('href');
+        if(!href || a.target === '_blank' || e.metaKey || e.ctrlKey) return;
+        e.preventDefault();
+        exit.classList.add('active');
+        setTimeout(()=>{ window.location.href = href; }, noMotion ? 0 : 420);
+      });
+    });
+  })();
+
+  // ---- scroll reveal (sections, cards, constellation nodes, feature-ask) ----
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e)=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.reveal, .const-node').forEach(el=>io.observe(el));
+</script>
+
+<script>
+  // ====================================================================
+  //  CINEMATIC LAYER — intro FLIP, NetField, LineField (matches index.html)
+  // ====================================================================
+  (function(){
+    const EASE     = 'cubic-bezier(0.22,1,0.36,1)';
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouch  = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+    // ─── INTRO SEQUENCE (FLIP to nav brand) ──────────────────────────
+    const introEl  = document.getElementById('intro');
+    const introMk  = document.getElementById('intro-wordmark');
+    const navBrand = document.getElementById('nav-brand');
+    const revealNav   = ()=> navBrand.classList.remove('intro-pending');
+    const finishIntro = ()=> introEl.classList.add('done');
+
+    if(noMotion){
+      finishIntro(); revealNav();
+    } else {
+      requestAnimationFrame(()=> introMk.classList.add('show'));
+      setTimeout(()=>{
+        const from  = introMk.getBoundingClientRect();
+        const to    = navBrand.getBoundingClientRect();
+        const scale = to.height / from.height;
+        const dx    = (to.left + to.width  / 2) - (from.left + from.width  / 2);
+        const dy    = (to.top  + to.height / 2) - (from.top  + from.height / 2);
+        introMk.style.transform = `translate(${dx}px,${dy}px) scale(${scale})`;
+        introMk.style.opacity   = '0';
+        const rings = introEl.querySelector('.intro-rings');
+        rings.style.transition = `opacity 0.55s ${EASE}`;
+        rings.style.opacity    = '0';
+        setTimeout(()=>{
+          revealNav();
+          introEl.style.transition = `opacity 0.45s ${EASE}`;
+          introEl.style.opacity    = '0';
+        }, 680);
+        setTimeout(finishIntro, 1080);
+      }, 1000);
+    }
+
+    // ─── NETWORK FIELD ───────────────────────────────────────────────
+    if(!noMotion){
+      const GOLD  = '201,168,76';
+      const CREAM = '250,249,246';
+
+      class NetField {
+        constructor(cv){
+          this.cv   = cv;
+          this.ctx  = cv.getContext('2d');
+          this.n    = parseInt(cv.dataset.density, 10) || 500;
+          this.pts  = [];
+          this.t    = 0;
+          this.ts   = null;
+          this.raf  = null;
+          this.live = false;
+          this._ro  = new ResizeObserver(()=> this.resize());
+          this._ro.observe(cv.parentElement);
+          this.resize();
+          cv.style.opacity    = '0';
+          cv.style.transition = `opacity 1.4s ${EASE}`;
+          requestAnimationFrame(()=> requestAnimationFrame(()=>{ cv.style.opacity = '1'; }));
+          this.start();
+        }
+        resize(){
+          const r = this.cv.parentElement.getBoundingClientRect();
+          if(!r.width || !r.height) return;
+          this.dpr = Math.min(devicePixelRatio || 1, 2);
+          this.w = r.width;  this.h = r.height;
+          this.cv.width  = this.w * this.dpr;
+          this.cv.height = this.h * this.dpr;
+          this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+          const mobile = innerWidth < 760;
+          const count  = Math.round(this.n * (mobile ? 0.40 : 1));
+          this.pts = Array.from({length: count}, ()=>({
+            x:    Math.random() * this.w,
+            y:    Math.random() * this.h,
+            r:    Math.random() < 0.92 ? 0.25 + Math.random() * 0.55
+                                       : 1.15 + Math.random() * 0.65,
+            base: 0.20 + Math.random() * 0.70,
+            spd:  0.40 + Math.random() * 1.40,
+            off:  Math.random() * Math.PI * 2,
+            gold: Math.random() < 0.35
+          }));
+        }
+        start(){
+          if(this.live) return;
+          this.live = true;
+          this.ts   = null;
+          this.raf  = requestAnimationFrame(ts => this.tick(ts));
+        }
+        stop(){
+          this.live = false;
+          if(this.raf){ cancelAnimationFrame(this.raf); this.raf = null; }
+        }
+        tick(ts){
+          if(!this.live) return;
+          if(this.ts !== null) this.t += (ts - this.ts) * 0.001;
+          this.ts = ts;
+          const { ctx, w, h, t } = this;
+          ctx.clearRect(0, 0, w, h);
+          for(const p of this.pts){
+            const tw = 0.5 + 0.5 * Math.sin(t * p.spd + p.off);
+            const a  = p.base * (0.35 + 0.65 * tw);
+            const c  = p.gold ? GOLD : CREAM;
+            if(p.r > 1.1){
+              const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
+              gr.addColorStop(0, `rgba(${c},${(a * 0.45).toFixed(3)})`);
+              gr.addColorStop(1, `rgba(${c},0)`);
+              ctx.fillStyle = gr;
+              ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.fillStyle = `rgba(${c},${a.toFixed(3)})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+          }
+          this.raf = requestAnimationFrame(ts => this.tick(ts));
+        }
+      }
+
+      const fields = [];
+      document.querySelectorAll('.net-field').forEach(c => fields.push(new NetField(c)));
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.hidden) fields.forEach(f => f.stop());
+        else                fields.forEach(f => f.start());
+      });
+    }
+
+    // ─── LINE FIELD ──────────────────────────────────────────────────
+    const lineIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(e.isIntersecting){ e.target.classList.add('in'); lineIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.line-field').forEach(s => lineIO.observe(s));
+
+    // ─── CONSTELLATION PARALLAX ──────────────────────────────────────
+    // Same rAF-lerp technique as the hero's floating cards, scoped to
+    // the constellation so "Your room" + the 5 Circle nodes drift gently
+    // toward the cursor at different depths.
+    if(!noMotion && !isTouch){
+      const constellation = document.querySelector('.constellation');
+      if(constellation){
+        const nodes = Array.from(constellation.querySelectorAll('.const-node'));
+        const LERP  = 0.075;
+        let txX = 0, txY = 0, crX = 0, crY = 0, rafId = null;
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        function constTick(){
+          crX = lerp(crX, txX, LERP);
+          crY = lerp(crY, txY, LERP);
+          for(const node of nodes){
+            const d = parseFloat(node.dataset.depth) || 0;
+            node.style.setProperty('--px', (crX * d).toFixed(2) + 'px');
+            node.style.setProperty('--py', (crY * d).toFixed(2) + 'px');
+          }
+          const settled = Math.abs(txX - crX) < 0.0014 && Math.abs(txY - crY) < 0.0014;
+          rafId = settled ? null : requestAnimationFrame(constTick);
+        }
+
+        constellation.addEventListener('mousemove', e => {
+          const r = constellation.getBoundingClientRect();
+          txX = (e.clientX - r.left) / r.width  - 0.5;
+          txY = (e.clientY - r.top)  / r.height - 0.5;
+          if(!rafId) rafId = requestAnimationFrame(constTick);
+        });
+
+        constellation.addEventListener('mouseleave', () => {
+          txX = 0; txY = 0;
+          if(!rafId) rafId = requestAnimationFrame(constTick);
+        });
+      }
+    }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+<title>Privacy Policy — LeverageBLK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-2:#121110;
+    --ink-3:#1A1714;
+    --gold:#C9A84C;
+    --gold-soft:rgba(201,168,76,.18);
+    --gold-line:rgba(201,168,76,.28);
+    --cream:#FAF9F6;
+    --cream-dim:rgba(250,249,246,.62);
+    --cream-faint:rgba(250,249,246,.34);
+    --display:"Clash Display","Plus Jakarta Sans",sans-serif;
+    --body:"Plus Jakarta Sans",system-ui,sans-serif;
+    --maxw:740px;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:var(--body);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(201,168,76,.08), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(201,168,76,.05), transparent 55%);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* nav */
+  header{position:relative;z-index:5;border-bottom:1px solid var(--gold-line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding-top:26px;padding-bottom:26px}
+  .brand{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.02em;color:var(--cream);text-decoration:none}
+  .brand b{color:var(--gold)}
+  .nav-back{
+    font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--cream-dim);text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;transition:.2s;
+  }
+  .nav-back:hover{color:var(--cream)}
+  .nav-back svg{opacity:.7}
+
+  /* page header */
+  .page-head{padding:64px 0 48px}
+  .eyebrow{
+    font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.7}
+  .page-head h1{
+    font-family:var(--display);font-weight:600;font-size:clamp(2.2rem,5vw,3rem);
+    line-height:1.05;letter-spacing:-.02em;margin-top:18px;
+  }
+  .page-head .subtitle{
+    font-size:1rem;color:var(--cream-dim);font-weight:300;margin-top:16px;max-width:50ch;
+  }
+  .updated{
+    display:inline-block;margin-top:24px;font-size:12.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--cream-faint);
+  }
+
+  /* content */
+  .content{padding-bottom:100px}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold-line),transparent);width:100%;margin-bottom:56px}
+
+  .section{margin-bottom:52px}
+  .section h2{
+    font-family:var(--display);font-weight:600;font-size:1.35rem;letter-spacing:-.01em;
+    color:var(--cream);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--gold-line);
+  }
+  .section h2 .num{
+    font-size:.75rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+    font-weight:600;margin-right:10px;vertical-align:middle;
+  }
+  .section p{
+    font-size:.97rem;color:var(--cream-dim);font-weight:300;margin-bottom:14px;
+  }
+  .section p:last-child{margin-bottom:0}
+  .section p strong{color:var(--cream);font-weight:600}
+  .section ul{
+    list-style:none;padding:0;margin:14px 0;
+  }
+  .section ul li{
+    font-size:.97rem;color:var(--cream-dim);font-weight:300;
+    padding:9px 0 9px 20px;border-bottom:1px solid rgba(250,249,246,.06);
+    position:relative;
+  }
+  .section ul li:last-child{border-bottom:none}
+  .section ul li::before{
+    content:"—";position:absolute;left:0;color:var(--gold);opacity:.8;font-weight:600;
+  }
+  .section ul li strong{color:var(--cream);font-weight:600}
+
+  /* callout box */
+  .callout{
+    border:1px solid var(--gold-line);border-radius:14px;padding:22px 24px;
+    background:var(--gold-soft);margin:24px 0;
+  }
+  .callout p{color:var(--cream);font-weight:400;font-size:.95rem;margin:0}
+  .callout p strong{color:var(--gold)}
+
+  /* contact card */
+  .contact-card{
+    border:1px solid var(--gold-line);border-radius:18px;padding:28px 30px;
+    background:linear-gradient(160deg,rgba(250,249,246,.03),transparent);margin-top:24px;
+  }
+  .contact-card .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+  .contact-card a{color:var(--gold);text-decoration:none;font-weight:500;font-size:.97rem}
+  .contact-card a:hover{text-decoration:underline}
+  .contact-card p{font-size:.95rem;color:var(--cream-dim);font-weight:300;margin-top:8px}
+
+  /* footer */
+  footer{padding:40px 0 50px;border-top:1px solid var(--gold-line)}
+  .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+  .foot .brand-sm{font-family:var(--display);font-weight:600;font-size:18px;color:var(--cream)}
+  .foot .brand-sm b{color:var(--gold)}
+  .foot .meta{font-size:12.5px;color:var(--cream-faint);text-align:right;line-height:2}
+  .foot .meta a{color:var(--cream-faint);text-decoration:none}
+  .foot .meta a:hover{color:var(--gold)}
+
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+  @media(max-width:600px){
+    .foot{flex-direction:column;align-items:flex-start}
+    .foot .meta{text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <div class="wrap nav">
+    <a href="leverage-blk-landing.html" class="brand">Leverage<b>BLK</b></a>
+    <a href="leverage-blk-landing.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to site
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <span class="eyebrow">Legal</span>
+      <h1>Privacy Policy</h1>
+      <p class="subtitle">How LeverageBLK collects, uses, and protects your information.</p>
+      <span class="updated">Last updated: June 2026</span>
+    </div>
+
+    <div class="content">
+      <div class="rule"></div>
+
+      <div class="callout">
+        <p><strong>Plain-English summary:</strong> We collect your phone number to send you a founding-member invite when LeverageBLK opens. We don't sell it, share it with advertisers, or use it for anything else. You can request removal at any time.</p>
+      </div>
+
+      <!-- 1 -->
+      <div class="section">
+        <h2><span class="num">01</span>Who we are</h2>
+        <p>LeverageBLK ("we," "us," or "our") is a private professional network for Black and Brown professionals, operated by LeverageBLK Corp. This page describes how we handle personal information collected through our pre-launch waitlist landing page.</p>
+        <p>This policy applies to information collected at <strong>leverageblk.com</strong> and any related waitlist or beta-access pages. It does not cover the full LeverageBLK platform, which will have its own terms once it launches.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="section">
+        <h2><span class="num">02</span>What we collect</h2>
+        <p>When you submit our waitlist form, we collect:</p>
+        <ul>
+          <li><strong>Phone number</strong> — the number you enter in the waitlist form. This is the only personal information we ask for.</li>
+          <li><strong>Signup source</strong> — which form on the page you used (hero or finale section). Helps us understand which copy resonates.</li>
+          <li><strong>Submission timestamp</strong> — automatically recorded when your entry is saved.</li>
+        </ul>
+        <p>We also collect standard <strong>analytics data</strong> automatically through Firebase Analytics (see Section 4). This includes page views, button clicks, and general usage patterns. It does not include your name, email address, or any information that directly identifies you to us.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="section">
+        <h2><span class="num">03</span>Why we collect it</h2>
+        <p>We use your phone number for one purpose: <strong>to text you your founding-member invite</strong> when LeverageBLK opens. We won't use it for anything else without asking you first.</p>
+        <p>Analytics data is used to understand how people find and interact with the site so we can improve it before launch. We look at aggregate patterns, not individual behavior.</p>
+        <p>We do not sell your phone number or any other data to third parties. We do not share it with advertisers.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="section">
+        <h2><span class="num">04</span>Third-party processors</h2>
+        <p>We use two third-party services to operate the waitlist. Both are established platforms with their own privacy and security practices.</p>
+        <ul>
+          <li>
+            <strong>Supabase</strong> — stores waitlist entries (phone number, source, timestamp) in a secure PostgreSQL database. Data is stored in the US. Supabase is SOC 2 Type 2 certified. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener" style="color:var(--gold)">supabase.com/privacy</a>.
+          </li>
+          <li>
+            <strong>Firebase Analytics (Google)</strong> — collects anonymized page and event analytics. Firebase Analytics does not receive your phone number. Google may use aggregate analytics data in accordance with their own policies. See <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener" style="color:var(--gold)">firebase.google.com/support/privacy</a>.
+          </li>
+          <li>
+            <strong>SMS provider (Twilio / TBD)</strong> — when we send invite texts, they are delivered through a registered SMS provider. Your phone number is transmitted to the provider solely to route the message. We will update this section with the specific provider name before any messages are sent.
+          </li>
+        </ul>
+        <p>We do not use any advertising pixels, retargeting trackers, or data brokers on this site.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="section">
+        <h2><span class="num">05</span>SMS consent and opt-out</h2>
+        <p>By submitting the waitlist form, you agree to receive text messages from LeverageBLK. Message and data rates may apply. Message frequency will be low — you'll hear from us when your invite is ready and for essential product updates.</p>
+        <p><strong>To opt out:</strong> Reply <strong>STOP</strong> to any text message from us. You will receive one confirmation text and no further messages. You can also request removal by contacting us directly (see Section 7).</p>
+        <p>Opting out removes you from SMS communications. It does not delete your record from the waitlist database — contact us directly if you want your data deleted.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="section">
+        <h2><span class="num">06</span>Data retention and security</h2>
+        <p>We retain waitlist data until LeverageBLK launches and founding-member invites have been sent, or until you request deletion — whichever comes first. After launch, we'll migrate active members to the platform and delete waitlist-only records on a rolling basis.</p>
+        <p>Security measures in place:</p>
+        <ul>
+          <li><strong>Row-Level Security (RLS)</strong> on the Supabase waitlist table — the public-facing key can only insert new rows; it cannot read, update, or delete existing ones.</li>
+          <li><strong>HTTPS</strong> on all data transmission between your browser and our backend.</li>
+          <li><strong>No service-role keys</strong> exposed in client-side code — only the restricted public key is present in the page source.</li>
+        </ul>
+        <p>No system is perfectly secure. If we become aware of a breach affecting your data, we will notify affected users promptly.</p>
+      </div>
+
+      <!-- 7 -->
+      <div class="section">
+        <h2><span class="num">07</span>Your rights and data removal</h2>
+        <p>You can request the following at any time:</p>
+        <ul>
+          <li><strong>Access</strong> — confirm whether we hold a record associated with your phone number.</li>
+          <li><strong>Deletion</strong> — have your waitlist record permanently removed from our database.</li>
+          <li><strong>Correction</strong> — update your phone number if you entered it incorrectly.</li>
+        </ul>
+        <p>To exercise any of these rights, contact us at the address below. We'll respond within 7 business days. We may ask you to verify your identity (e.g., confirm the phone number) before making changes.</p>
+        <div class="contact-card">
+          <div class="label">Data requests</div>
+          <a href="mailto:privacy@leverageblk.com">privacy@leverageblk.com</a>
+          <p>Include "Data Request" in the subject line and the phone number associated with your waitlist entry.</p>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="section">
+        <h2><span class="num">08</span>Children's privacy</h2>
+        <p>LeverageBLK is a professional network intended for adults 18 and older. We do not knowingly collect information from anyone under 18. If you believe a minor has submitted their information, please contact us at <a href="mailto:privacy@leverageblk.com" style="color:var(--gold)">privacy@leverageblk.com</a> and we will delete the record promptly.</p>
+      </div>
+
+      <!-- 9 -->
+      <div class="section">
+        <h2><span class="num">09</span>Changes to this policy</h2>
+        <p>We may update this policy as the product grows. If changes are material (e.g., we add a new data category or processor), we'll note it at the top of this page with an updated date. Continued use of the waitlist after changes constitutes acceptance of the updated policy.</p>
+        <p>This policy was drafted in good faith to be accurate and complete. <strong>It has not been reviewed by legal counsel.</strong> Before LeverageBLK exits beta, the policy should receive a review from whoever handles LeverageBLK Corp's legal structure.</p>
+      </div>
+
+      <!-- 10 -->
+      <div class="section">
+        <h2><span class="num">10</span>Contact</h2>
+        <p>For privacy questions, data requests, or any concerns about how we handle your information:</p>
+        <div class="contact-card">
+          <div class="label">LeverageBLK Corp</div>
+          <a href="mailto:privacy@leverageblk.com">privacy@leverageblk.com</a>
+          <p>Founded by Malcolm &amp; David Butler · United States</p>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /wrap -->
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand-sm">Leverage<b>BLK</b></div>
+    <div class="meta">
+      <div><a href="leverage-blk-landing.html">← Back to waitlist</a></div>
+      <div>© 2026 LeverageBLK Corp. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
