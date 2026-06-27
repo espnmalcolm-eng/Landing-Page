@@ -306,7 +306,7 @@
   }
 
   /* ---- globe moment (full-screen cinematic section) ---- */
-  #globe-moment{min-height:100vh;position:relative;overflow:hidden}
+  #globe-moment{height:100vh;position:relative;overflow:hidden}
   /* Three.js WebGL canvas — injected by JS at scene start */
   #globe-moment .globe-canvas{
     position:absolute;inset:0;width:100%;height:100%;
@@ -337,31 +337,26 @@
     position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
   }
 
-  /* static globe crop — cinematic image fallback / base layer */
+  /* static globe crop — full-bleed base layer (fills the whole section so there is
+     no letterboxed band that would show as black/gray at high zoom). The zoom scale +
+     transform-origin are applied to this element by the ScrollTrigger JS. */
   .globe-crop{
-    position:relative;
+    position:absolute;
+    inset:0;
     width:100%;
-    height:620px;
+    height:100%;
     overflow:hidden;
     background:#000;
   }
   .globe-crop img{
-    position:absolute;
-    left:50%;
-    bottom:-12%;
-    width:115%;
-    max-width:none;
-    transform:translateX(-50%);
-    object-fit:cover;
+    width:100%;
+    height:100%;
+    object-fit:cover;            /* covers the entire section, no letterboxing */
+    object-position:center 60%;  /* keeps the globe in the lower portion */
     filter:
       contrast(1.08)
       saturate(1.06)
-      brightness(0.96)
-      drop-shadow(0 -20px 80px rgba(212,184,106,0.18));
-  }
-  @media(max-width:768px){
-    .globe-crop{height:420px}
-    .globe-crop img{width:195%;left:58%;bottom:-8%}
+      brightness(0.96);
   }
 
   /* mobile-only scroll hint */
@@ -1545,8 +1540,10 @@
     camera.updateProjectionMatrix();
   }).observe(cropEl);
 
-  // zoom origin — push toward the NYC hub (set once; ScrollTrigger drives the scale)
-  cropEl.style.transformOrigin = isMobile ? '40% 60%' : '38% 65%';
+  // zoom origin — push toward the NYC hub in the full-bleed image (set once;
+  // ScrollTrigger drives the scale). Estimate for the cover composition — dial in
+  // visually: '48% 55%' shifts left/up, '56% 62%' shifts right/down.
+  cropEl.style.transformOrigin = '52% 58%';
 
   // scatter one sprite outward along `dir` while fading to 0
   function scatterSprite(cs){
@@ -1670,6 +1667,7 @@
         onUpdate: self => {
           const p = self.progress;
           visible = true;       // keep the render loop alive throughout the pin
+          if(heroEl && heroEl.style.position === 'fixed') section.style.zIndex = '1';  // keep globe above the fixed hero (survives refresh)
           // drive the zoom toward the NYC hub
           cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
           driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
