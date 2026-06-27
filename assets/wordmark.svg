@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52">
+  <defs>
+    <style>
+      @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+      text {
+        font-family: "Clash Display", "Plus Jakarta Sans", sans-serif;
+        font-weight: 600;
+        font-size: 42px;
+        letter-spacing: 0.02em;
+      }
+      tspan.leverage { fill: #FAF9F6; }
+      tspan.blk { fill: #C9A84C; }
+    </style>
+  </defs>
+  <text x="4" y="40">
+    <tspan class="leverage">Leverage</tspan><tspan class="blk">BLK</tspan>
+  </text>
+</svg>
