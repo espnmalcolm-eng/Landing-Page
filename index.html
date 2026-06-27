@@ -1621,7 +1621,7 @@
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=200%',          // 300vh of scroll to work with
+        end: isMobile ? '+=80%' : '+=120%',   // pin length — tuned for a conversion page
         pin: true,
         scrub: SCRUB,           // scroll drives the animation directly, smoothed
         onUpdate: self => {
