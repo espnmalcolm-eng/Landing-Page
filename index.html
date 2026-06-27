@@ -1607,6 +1607,44 @@
   const SCALE_GAIN = isMobile ? 0.6 : 1.2;   // 1.0 → 1.6 (mobile) / 2.2 (desktop)
   const SCRUB      = isMobile ? 0.8 : 1.2;
 
+  // the overlay copy ("Real connections" / tagline) rides the same scrub — it fades +
+  // drifts up + blurs out over the first 70% of progress, clearing before the dissolve.
+  // Driven on the .globe-moment-copy CONTAINER (no .reveal transition to fight the scrub);
+  // the per-line load blur-in on the .reveal spans is untouched. Cleared at p≈0 so the
+  // load entrance + reverse-scrub both restore cleanly.
+  const copyEl = section.querySelector('.globe-moment-copy');
+  function driveCopy(p, motion){
+    if(!copyEl) return;
+    if(p <= 0.001){ copyEl.style.opacity = ''; copyEl.style.transform = ''; copyEl.style.filter = ''; return; }
+    const cp = Math.min(p / 0.7, 1);
+    copyEl.style.opacity = String(1 - cp);
+    if(motion){
+      copyEl.style.transform = `translateY(${cp * -40}px)`;
+      copyEl.style.filter    = `blur(${cp * 8}px)`;
+    }
+  }
+
+  // ── Option B crossfade: #hero sits FIXED behind the pinned globe so the dissolve
+  // reveals it directly (zero black). While pinned, hero is fixed/full-viewport at
+  // z-index 0 with the globe section lifted above it; on release it returns to normal
+  // flow so the page scrolls as usual. The hero StarField (NetField) is always-on from
+  // page load (window.__heroNetField), so it's already rendering during the crossfade.
+  const heroEl = document.getElementById('hero');
+  function setHeroBehind(on){
+    if(!heroEl) return;
+    if(on){
+      Object.assign(heroEl.style, {
+        position:'fixed', top:'0', left:'0', width:'100%', height:'100vh', zIndex:'0', opacity:'0'
+      });
+      section.style.zIndex = '1';   // keep the pinned globe above the fixed hero
+    } else {
+      Object.assign(heroEl.style, {
+        position:'', top:'', left:'', width:'', height:'', zIndex:'', opacity:''
+      });
+      section.style.zIndex = '';    // back to normal flow / stacking
+    }
+  }
+
   if(window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
 
@@ -1614,28 +1652,38 @@
       // reduced motion: NO pin — just crossfade the crop out as the section scrolls past
       ScrollTrigger.create({
         trigger: section, start: 'top top', end: '+=100%', scrub: true,
-        onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); },
+        onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); driveCopy(self.progress, false); },
         onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
       });
     } else {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: isMobile ? '+=80%' : '+=120%',   // pin length — tuned for a conversion page
+        // pin length — kept short so the pin releases into #hero right as the zoom
+        // completes, instead of holding on a dissolved-to-black globe (the old 120%/80%
+        // left a long black "deadzone" in the back third of the pin).
+        end: isMobile ? '+=55%' : '+=75%',
         pin: true,
         scrub: SCRUB,           // scroll drives the animation directly, smoothed
+        // fix the hero behind on engage, restore to normal flow on disengage (either edge)
+        onToggle: self => setHeroBehind(self.isActive),
         onUpdate: self => {
           const p = self.progress;
           visible = true;       // keep the render loop alive throughout the pin
           // drive the zoom toward the NYC hub
           cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
-          // dissolve over the final 30% of scroll progress
-          if(p > 0.7){
-            const d = (p - 0.7) / 0.3;
+          driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
+          // dissolve in the final ~22% — globe stays visible/zooming longer, then a quick
+          // fade. The hero crossfades in BEHIND the globe (inverse opacity) so there's no
+          // black: globe 1→0 while hero 0→1, completing exactly at pin-release.
+          if(p > 0.78){
+            const d = (p - 0.78) / 0.22;
             cropEl.style.opacity = String(1 - d);
+            if(heroEl) heroEl.style.opacity = String(d);     // crossfade hero in
             if(!scatterFired){ scatterParticles(); scatterFired = true; }
           } else {
             cropEl.style.opacity = '1';
+            if(heroEl) heroEl.style.opacity = '0';           // hero hidden behind the opaque globe
             if(scatterFired){ restoreParticles(); scatterFired = false; }   // scrubbed back up
           }
         },
