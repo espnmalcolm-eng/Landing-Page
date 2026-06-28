@@ -306,7 +306,11 @@
   }
 
   /* ---- globe moment (full-screen cinematic section) ---- */
-  #globe-moment{height:100vh;position:relative;overflow:hidden}
+  /* wrapper co-locates the hero behind the globe (hero is positioned absolute at top:0
+     by the ScrollTrigger JS during the pinned experience; in the reduced-motion / no-GSAP
+     fallback the hero stays in normal flow right below the globe — no gap either way) */
+  #globe-hero-wrapper{position:relative}
+  #globe-moment{height:100vh;position:relative;overflow:hidden;z-index:1}
   /* Three.js WebGL canvas — injected by JS at scene start */
   #globe-moment .globe-canvas{
     position:absolute;inset:0;width:100%;height:100%;
@@ -469,6 +473,9 @@
   </div>
 </header>
 
+<!-- globe-moment + hero share one wrapper so the hero is co-located behind the globe:
+     when the pin releases there is no scroll-distance to travel — the hero is already there -->
+<div id="globe-hero-wrapper">
 <!-- 0 · GLOBE MOMENT — cinematic opener, full-screen, no conversion -->
 <section id="globe-moment">
   <div class="globe-crop" aria-hidden="true">
@@ -537,6 +544,7 @@
     </div>
   </div>
 </section>
+</div><!-- /#globe-hero-wrapper -->
 
 <!-- 01 · ADVOCACY / THE WHY -->
 <section class="block" id="why">
@@ -1621,53 +1629,43 @@
     }
   }
 
-  // ── Option B crossfade: #hero sits FIXED behind the pinned globe so the dissolve
-  // reveals it directly (zero black). While pinned, hero is fixed/full-viewport at
-  // z-index 0 with the globe section lifted above it; on release it returns to normal
-  // flow so the page scrolls as usual. The hero StarField (NetField) is always-on from
-  // page load (window.__heroNetField), so it's already rendering during the crossfade.
-  const heroEl = document.getElementById('hero');
-  function setHeroBehind(on){
-    if(!heroEl) return;
-    if(on){
-      Object.assign(heroEl.style, {
-        position:'fixed', top:'0', left:'0', width:'100%', height:'100vh', zIndex:'0', opacity:'0'
-      });
-      section.style.zIndex = '1';   // keep the pinned globe above the fixed hero
-    } else {
-      Object.assign(heroEl.style, {
-        position:'', top:'', left:'', width:'', height:'', zIndex:'', opacity:''
-      });
-      section.style.zIndex = '';    // back to normal flow / stacking
-    }
-  }
+  // ── Co-located crossfade: the hero shares #globe-hero-wrapper with the globe and is
+  // positioned ABSOLUTE at top:0 (behind the globe, z-index 0) for the pinned experience,
+  // so it's always in the same place as the globe — when the pin releases the hero is
+  // already there, no scroll-distance to travel (zero gap). The hero StarField (NetField)
+  // is always-on from page load (window.__heroNetField), already rendering for the crossfade.
+  // NOTE: only done in the GSAP-pinned path — in the reduced-motion / no-GSAP fallback the
+  // hero stays in normal flow right below the globe (also gap-free).
+  const heroEl  = document.getElementById('hero');
+  const wrapper = document.getElementById('globe-hero-wrapper');
 
-  if(window.gsap && window.ScrollTrigger){
+  if(window.gsap && window.ScrollTrigger && wrapper){
     gsap.registerPlugin(ScrollTrigger);
 
     if(noMotion){
-      // reduced motion: NO pin — just crossfade the crop out as the section scrolls past
+      // reduced motion: NO pin, hero stays in normal flow below the globe — just crossfade
+      // the crop out as the globe scrolls past; the hero is right there underneath.
       ScrollTrigger.create({
         trigger: section, start: 'top top', end: '+=100%', scrub: true,
         onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); driveCopy(self.progress, false); },
         onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
       });
     } else {
+      // co-locate the hero behind the globe (absolute top:0 inside the relative wrapper),
+      // hidden until the crossfade. Set once — not toggled — so it's always in place.
+      if(heroEl){
+        Object.assign(heroEl.style, { position:'absolute', top:'0', left:'0', width:'100%', zIndex:'0', opacity:'0' });
+      }
+      // pin the WRAPPER (not the globe section) so the spacer accounts for both together
       ScrollTrigger.create({
-        trigger: section,
+        trigger: wrapper,
         start: 'top top',
-        // pin length — kept short so the pin releases into #hero right as the zoom
-        // completes, instead of holding on a dissolved-to-black globe (the old 120%/80%
-        // left a long black "deadzone" in the back third of the pin).
-        end: isMobile ? '+=55%' : '+=75%',
-        pin: true,
+        end: isMobile ? '+=80%' : '+=120%',   // pin length / zoom duration
+        pin: wrapper,
         scrub: SCRUB,           // scroll drives the animation directly, smoothed
-        // fix the hero behind on engage, restore to normal flow on disengage (either edge)
-        onToggle: self => setHeroBehind(self.isActive),
         onUpdate: self => {
           const p = self.progress;
           visible = true;       // keep the render loop alive throughout the pin
-          if(heroEl && heroEl.style.position === 'fixed') section.style.zIndex = '1';  // keep globe above the fixed hero (survives refresh)
           // drive the zoom toward the NYC hub
           cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
           driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
