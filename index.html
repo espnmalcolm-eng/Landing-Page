@@ -336,6 +336,20 @@
     font-family:var(--display);font-weight:500;color:var(--cream);
     font-size:clamp(2rem,5vw,3.8rem);line-height:1.05;margin:0;
   }
+  /* event CTA — lives inside the cinematic globe moment (copy is pointer-events:none,
+     so the link re-enables pointer events on itself) */
+  .gm-cta{
+    display:inline-flex;align-items:center;gap:10px;margin-top:clamp(30px,6vh,58px);
+    pointer-events:auto;font-family:var(--body);font-weight:600;font-size:12.5px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;
+    border:1px solid var(--gold-line);background:var(--gold-soft);backdrop-filter:blur(4px);
+    padding:13px 22px;border-radius:999px;transition:transform .25s,background .25s,color .25s,box-shadow .25s;
+  }
+  .gm-cta:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 14px 40px -16px rgba(201,168,76,.7)}
+  .gm-cta .gm-cta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 var(--gold);animation:pulse 2.4s infinite}
+  .gm-cta:hover .gm-cta-dot{background:var(--ink)}
+  .gm-cta .gm-cta-arrow{transition:transform .25s}
+  .gm-cta:hover .gm-cta-arrow{transform:translateX(3px)}
   /* WebGL overlay canvas sits inside the crop box */
   .globe-crop .globe-canvas{
     position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
@@ -495,6 +509,11 @@
   <div class="globe-moment-copy">
     <span class="gm-eyebrow reveal">Real connections</span>
     <p class="gm-line reveal">Where your culture is your credential.</p>
+    <a class="gm-cta reveal" href="culture-connects.html" data-track="event_cta" data-transition>
+      <span class="gm-cta-dot"></span>
+      Culture Connects: ATX · Jul 12 · Austin
+      <span class="gm-cta-arrow">→</span>
+    </a>
   </div>
   <div class="globe-scroll-hint" aria-hidden="true">↓</div>
 </section>

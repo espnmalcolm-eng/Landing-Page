@@ -308,7 +308,7 @@
         <div class="cd-box cd-secs"><div class="num" id="cd-secs">–</div><div class="lab">Secs</div></div>
       </div>
 
-      <a href="#rsvp" class="btn" id="hero-cta">Secure your spot ↓</a>
+      <a href="https://posh.vip/e/culture-connect-atx" target="_blank" rel="noopener" class="btn" id="hero-cta">Secure your spot →</a>
     </div>
   </div>
 </section>
@@ -404,7 +404,7 @@
           <span class="tag">From LeverageBLK</span>
           <p>While you're here — the platform being built for exactly the people in this room is accepting its first Legacy members. <a href="index.html#waitlist">Join the waitlist at the door or right here →</a></p>
         </div>
-        <img class="flyer" src="assets/culture-connect-flyer.png" alt="Culture Connects: ATX event flyer" loading="lazy" onerror="this.style.display='none'">
+        <img class="flyer" src="assets/culture-connect-flyer.jpg" alt="Culture Connects: ATX event flyer" loading="lazy" onerror="this.style.display='none'">
       </div>
       <div class="reveal d1">
         <div class="addr-block">
@@ -427,20 +427,8 @@
       <span class="eyebrow reveal" style="justify-content:center">Secure your spot</span>
       <h2 class="reveal" style="margin-top:16px">The room holds 100. <span class="gold">Don't find out it's full at the door.</span></h2>
       <p class="reveal d1">Free entry. No dress code. Just show up as you.</p>
-      <form class="form" id="form-rsvp" novalidate>
-        <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <input type="text"  name="name"  placeholder="Your name" autocomplete="name" required>
-        <input type="text"  name="field" placeholder="Field of work" required>
-        <input type="tel"   name="phone" placeholder="Phone — we'll text you updates" autocomplete="tel">
-        <input type="email" name="email" placeholder="Email (optional)" autocomplete="email">
-        <button type="button" class="btn">Secure your spot</button>
-      </form>
-      <p class="form-err" id="err-rsvp" style="text-align:center">Add a phone number or email so we can confirm your spot.</p>
-      <p class="form-note reveal" style="text-align:center;opacity:.6;max-width:46ch;margin-left:auto;margin-right:auto">By RSVPing, you agree to receive text updates about Culture Connects: ATX from LeverageBLK. Msg &amp; data rates may apply. Reply STOP to opt out.</p>
-      <div class="success" id="ok-rsvp">
-        <h4>You're in.</h4>
-        <p>See you Sunday, July 12 at KickingIt ATX. We'll text you the details closer to the date.</p>
-      </div>
+      <a href="https://posh.vip/e/culture-connect-atx" target="_blank" rel="noopener" class="btn posh-cta reveal d2" id="rsvp-cta">RSVP on Posh →</a>
+      <p class="form-note reveal" style="text-align:center;opacity:.6;max-width:46ch;margin-left:auto;margin-right:auto">Free RSVP through Posh — you'll get your confirmation, reminders, and event details there.</p>
     </div>
   </div>
 </section>
@@ -457,15 +445,6 @@
     </div>
   </div>
 </footer>
-
-<!-- ===== Supabase client ===== -->
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  window.supabase = createClient(
-    'https://mkxtkjitjgzjkflhahto.supabase.co',
-    'sb_publishable_dKsJQFjb3V1XTMwOeFMTgw_0mRtjydR'
-  );
-</script>
 
 <!-- ===== Firebase Analytics scaffold (logs to console until configured) ===== -->
 <script type="module">
@@ -494,69 +473,8 @@
   };
 </script>
 
-<!-- ===== RSVP capture ===== -->
+<!-- ===== countdown + RSVP (Posh) tracking ===== -->
 <script>
-  function isPhone(v){ const d = v.replace(/\D/g,''); return d.length >= 10 && d.length <= 15; }
-  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
-
-  (function bindRsvp(){
-    const form    = document.getElementById('form-rsvp');
-    const ok      = document.getElementById('ok-rsvp');
-    const errEl   = document.getElementById('err-rsvp');
-    const honeypot= form.querySelector('.hp-field');
-    const nameEl  = form.querySelector('input[name="name"]');
-    const fieldEl = form.querySelector('input[name="field"]');
-    const phoneEl = form.querySelector('input[type="tel"]');
-    const emailEl = form.querySelector('input[type="email"]');
-    const btn     = form.querySelector('button');
-    const inputs  = [nameEl, fieldEl, phoneEl, emailEl];
-
-    function clearErrors(){ inputs.forEach(i => i.style.borderColor = ''); errEl.style.display = 'none'; }
-
-    async function submit(){
-      clearErrors();
-      if(honeypot && honeypot.value){ return; } // bot
-
-      let valid = true, firstInvalid = null;
-      function flag(el){ el.style.borderColor = '#c0563f'; if(!firstInvalid) firstInvalid = el; valid = false; }
-      if(!nameEl.value.trim())  flag(nameEl);
-      if(!fieldEl.value.trim()) flag(fieldEl);
-      const phoneVal = phoneEl.value.trim(), emailVal = emailEl.value.trim();
-      if(phoneVal && !isPhone(phoneVal)) flag(phoneEl);
-      if(emailVal && !isEmail(emailVal)) flag(emailEl);
-      if(!phoneVal && !emailVal){ errEl.style.display = 'block'; valid = false; }
-      if(!valid){ if(firstInvalid) firstInvalid.focus(); return; }
-
-      btn.disabled = true; btn.textContent = 'Saving…';
-      const name = nameEl.value.trim(), field = fieldEl.value.trim();
-      const phone = phoneVal || null, email = emailVal || null;
-      try{
-        const { error } = await window.supabase
-          .from('waitlist')
-          .insert({ name: name || null, phone, email, field: field || null, source: 'event_atx' });
-        if(error && error.code !== '23505'){   // 23505 = dup phone → treat as success
-          console.error('Supabase error:', error);
-          btn.disabled = false; btn.textContent = 'Secure your spot';
-          return;
-        }
-      }catch(e){
-        console.error('Insert failed:', e);
-        btn.disabled = false; btn.textContent = 'Secure your spot';
-        return;
-      }
-      window.trackEvent('event_rsvp', { source: 'culture_connects_atx' });
-      form.style.display = 'none';
-      errEl.style.display = 'none';
-      ok.classList.add('show');
-    }
-
-    btn.addEventListener('click', submit);
-    inputs.forEach(i => {
-      i.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
-      i.addEventListener('input', () => { i.style.borderColor = ''; });
-    });
-  })();
-
   // ---- countdown to July 12, 2026 12:00 PM CDT ----
   (function countdown(){
     const el = document.getElementById('countdown');
@@ -576,8 +494,11 @@
     const timer = setInterval(tick, 1000);
   })();
 
-  // ---- track hero CTA ----
-  document.getElementById('hero-cta').addEventListener('click', () => window.trackEvent('cta_click', { target: 'rsvp' }));
+  // ---- track Posh RSVP clicks (hero + finale) ----
+  ['hero-cta','rsvp-cta'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('click', () => window.trackEvent('event_rsvp', { source: 'culture_connects_atx', via: id === 'hero-cta' ? 'hero' : 'finale' }));
+  });
 </script>
 
 <!-- ===== StarField (NetField) + LineField + reveal ===== -->
