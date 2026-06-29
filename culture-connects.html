@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+<title>Culture Connects: ATX — LeverageBLK</title>
+<meta name="description" content="A fashion industry mixer for Austin's creative class. Sun July 12, 2026 · 12–2PM · KickingIt ATX, The Domain. Free entry.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --ink-2:#121110;
+    --ink-3:#1A1714;
+    --gold:#C9A84C;
+    --gold-soft:rgba(201,168,76,.18);
+    --gold-line:rgba(201,168,76,.28);
+    --cream:#FAF9F6;
+    --cream-dim:rgba(250,249,246,.62);
+    --cream-faint:rgba(250,249,246,.34);
+    --display:"Clash Display","Plus Jakarta Sans",sans-serif;
+    --body:"Plus Jakarta Sans",system-ui,sans-serif;
+    --maxw:1180px;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* grain + atmosphere */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(201,168,76,.10), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(201,168,76,.06), transparent 55%);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---- type ---- */
+  h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.02;letter-spacing:-.02em}
+  .eyebrow{
+    font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.7}
+
+  /* ---- nav ---- */
+  header{position:absolute;top:0;left:0;right:0;z-index:5}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding-top:26px;padding-bottom:26px}
+  .brand{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.02em;color:var(--cream);text-decoration:none}
+  .brand b{color:var(--gold)}
+  .nav a.cta-ghost{
+    font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--cream);text-decoration:none;
+    border:1px solid var(--gold-line);padding:10px 18px;border-radius:999px;transition:.25s;
+  }
+  .nav a.cta-ghost:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+
+  /* ---- hero ---- */
+  .hero{min-height:100svh;display:flex;align-items:center;padding:150px 0 90px;position:relative;overflow:clip;text-align:center}
+  .hero .inner{position:relative;z-index:2;max-width:800px;margin:0 auto}
+  .chip{
+    display:inline-flex;align-items:center;gap:10px;font-size:11.5px;font-weight:600;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-line);
+    padding:8px 15px;border-radius:999px;background:var(--gold-soft);backdrop-filter:blur(4px);
+  }
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 var(--gold);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.5)}70%{box-shadow:0 0 0 9px rgba(201,168,76,0)}100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+  .hero h1{font-size:clamp(3rem,8vw,6.5rem);margin:26px 0 0;letter-spacing:-.02em}
+  .details-strip{
+    margin:22px auto 0;font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);max-width:42ch;line-height:1.7;
+  }
+  .hero .sub{font-size:clamp(1rem,1.5vw,1.18rem);color:var(--cream-dim);max-width:54ch;margin:24px auto 0;font-weight:300}
+  .hero .sub b{color:var(--cream);font-weight:500}
+
+  /* ---- countdown ---- */
+  .countdown{display:flex;gap:14px;justify-content:center;margin:38px 0 0;flex-wrap:wrap}
+  .cd-box{
+    min-width:84px;border:1px solid var(--gold-line);border-radius:14px;padding:16px 14px;
+    background:linear-gradient(180deg,rgba(201,168,76,.07),transparent);
+  }
+  .cd-box .num{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--gold);line-height:1}
+  .cd-box .lab{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-faint);font-weight:600;margin-top:8px}
+  .hero .btn{margin-top:40px}
+
+  /* ---- buttons / forms ---- */
+  .btn{
+    background:var(--gold);color:var(--ink);font-family:var(--body);font-weight:700;font-size:15px;
+    letter-spacing:.01em;border:none;padding:16px 30px;border-radius:12px;cursor:pointer;
+    position:relative;overflow:hidden;transition:transform .2s,box-shadow .25s;white-space:nowrap;
+    display:inline-block;text-decoration:none;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 38px -14px rgba(201,168,76,.7)}
+  .btn::after{content:"";position:absolute;top:0;left:-130%;width:60%;height:100%;
+    background:linear-gradient(110deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg)}
+  .btn:hover::after{animation:shine .8s ease}
+  @keyframes shine{to{left:140%}}
+  .form{display:flex;gap:10px;max-width:480px;margin-top:34px;flex-wrap:wrap}
+  .form input{
+    flex:1;min-width:220px;background:rgba(250,249,246,.04);border:1px solid var(--gold-line);
+    color:var(--cream);font-family:var(--body);font-size:15px;padding:16px 18px;border-radius:12px;transition:.2s;
+  }
+  .form input::placeholder{color:var(--cream-faint)}
+  .form input:focus{outline:none;border-color:var(--gold);background:rgba(250,249,246,.06)}
+  .form-note{font-size:12.5px;color:var(--cream-faint);margin-top:14px;letter-spacing:.02em}
+  .form-note b{color:var(--gold);font-weight:600}
+  .form-note a{color:var(--gold);text-decoration:none}
+  .form-note a:hover{text-decoration:underline}
+  .form-err{display:none;color:#d98b6f;font-size:12.5px;margin-top:10px}
+  .hp-field{position:absolute;left:-9999px;opacity:0;pointer-events:none}
+  .success{
+    display:none;margin-top:34px;max-width:480px;border:1px solid var(--gold-line);
+    background:var(--gold-soft);border-radius:14px;padding:20px 22px;
+  }
+  .success.show{display:block;animation:fadeup .5s ease}
+  .success h4{font-family:var(--display);color:var(--gold);font-size:17px;margin-bottom:4px}
+  .success p{font-size:14px;color:var(--cream-dim)}
+  @keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* ---- section shell ---- */
+  section.block{padding:clamp(80px,11vh,140px) 0;position:relative}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold-line),transparent);width:100%}
+  .lead-head{font-size:clamp(2rem,4.4vw,3.4rem);max-width:20ch;margin:22px 0 0}
+  .lead-head .gold{color:var(--gold)}
+  .body-copy{color:var(--cream-dim);font-size:1.05rem;font-weight:300;margin-top:22px;max-width:60ch}
+  .body-copy strong{color:var(--cream);font-weight:600}
+  .body-copy + .body-copy{margin-top:16px}
+  .pullquote{
+    font-family:var(--display);font-weight:500;font-size:clamp(1.5rem,2.6vw,2.05rem);line-height:1.18;
+    color:var(--cream);border-left:2px solid var(--gold);padding-left:26px;margin-top:44px;max-width:24ch;
+    letter-spacing:-.01em;font-style:italic;
+  }
+  .pullquote em{color:var(--gold)}
+
+  /* ---- cards (inside the room) ---- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
+  .card{
+    border:1px solid var(--gold-line);border-radius:20px;padding:34px 30px;background:var(--ink-2);
+    position:relative;transition:.3s;overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,rgba(201,168,76,.10),transparent 60%);opacity:0;transition:.3s}
+  .card:hover{transform:translateY(-6px);border-color:var(--gold)}
+  .card:hover::before{opacity:1}
+  .card .num{font-family:var(--display);font-size:13px;letter-spacing:.3em;color:var(--gold);opacity:.8}
+  .card h3{font-size:1.45rem;margin:16px 0 10px;color:var(--cream)}
+  .card p{font-size:.96rem;color:var(--cream-dim);font-weight:300}
+
+  /* ---- networking bingo ---- */
+  .bingo-wrap{margin-top:60px;max-width:640px}
+  .bingo{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:22px;
+    border:1px solid var(--gold-line);border-radius:18px;overflow:hidden;
+  }
+  .bingo .cell{
+    border:1px solid rgba(201,168,76,.15);padding:20px;font-size:13px;color:var(--cream);
+    min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;
+    line-height:1.4;font-weight:400;transition:background .25s;
+  }
+  .bingo .cell:hover{background:var(--gold-soft)}
+  .bingo .cell.free{
+    background:rgba(201,168,76,.15);color:var(--gold);font-family:var(--display);font-weight:500;font-size:14px;
+  }
+  .bingo .cell.free:hover{background:rgba(201,168,76,.22)}
+
+  /* ---- topics (the panel) ---- */
+  .topics{list-style:none;margin-top:40px;max-width:60ch}
+  .topics li{
+    color:var(--cream-dim);font-size:1.08rem;font-weight:300;padding:16px 0;border-bottom:1px solid rgba(201,168,76,.12);
+    display:flex;gap:16px;align-items:baseline;
+  }
+  .topics li::before{content:"—";color:var(--gold);font-weight:600;flex-shrink:0}
+  .close-line{color:var(--cream);font-size:1.1rem;margin-top:34px;max-width:54ch;font-weight:300}
+  .close-line b{color:var(--gold);font-weight:600}
+
+  /* ---- venue ---- */
+  .venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start;margin-top:50px}
+  .venue-partners{font-family:var(--display);font-weight:600;font-size:clamp(1.4rem,2.6vw,2rem);color:var(--cream);margin-top:18px}
+  .venue-partners .x{color:var(--gold);font-style:italic;font-weight:500;padding:0 6px}
+  .venue-note{
+    margin-top:34px;border:1px solid var(--gold-line);border-radius:16px;padding:24px;
+    background:linear-gradient(180deg,rgba(201,168,76,.06),transparent);
+  }
+  .venue-note .tag{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .venue-note p{color:var(--cream-dim);font-size:.97rem;font-weight:300;margin-top:10px}
+  .venue-note a{color:var(--gold);text-decoration:none;font-weight:600}
+  .venue-note a:hover{text-decoration:underline}
+  .addr-block{font-family:var(--display);font-weight:500;font-size:1.1rem;color:var(--cream);line-height:1.5;margin-bottom:18px}
+  .addr-block .muted{color:var(--cream-faint);font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;font-family:var(--body);display:block;margin-bottom:8px}
+  .map-embed{width:100%;height:300px;border:1px solid var(--gold-line);border-radius:16px;filter:grayscale(1) contrast(1.1);display:block}
+  .flyer{display:block;max-width:280px;width:100%;border-radius:16px;border:1px solid var(--gold-line);margin-top:26px}
+
+  /* ---- finale / rsvp ---- */
+  .finale{
+    border:1px solid var(--gold-line);border-radius:28px;padding:clamp(44px,6vw,76px);
+    background:linear-gradient(160deg,var(--ink-3),var(--ink-2));text-align:center;position:relative;overflow:hidden;
+  }
+  .finale::after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle,rgba(201,168,76,.16),transparent 65%);top:-220px;right:-120px}
+  .finale h2{font-size:clamp(2.1rem,4.8vw,3.6rem);position:relative;max-width:18ch;margin:0 auto}
+  .finale h2 .gold{color:var(--gold)}
+  .finale p{color:var(--cream-dim);margin:20px auto 0;max-width:46ch;font-weight:300;position:relative}
+  .finale .form{margin:34px auto 0;justify-content:center}
+  .finale .success{margin-left:auto;margin-right:auto}
+
+  /* ---- footer ---- */
+  footer{padding:60px 0 50px;border-top:1px solid var(--gold-line);margin-top:clamp(60px,9vh,120px)}
+  .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
+  .foot a.brand{font-size:24px}
+  .foot .tagline{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:8px;font-weight:600}
+  .foot .meta{font-size:13px;color:var(--cream-faint);text-align:right;line-height:1.9}
+  .foot .meta a{color:var(--cream-dim);text-decoration:none}
+  .foot .meta a:hover{color:var(--gold)}
+
+  /* ---- network field + line field ---- */
+  /* width/height:100% constrain the canvas (a replaced element) to its parent —
+     without it, inset:0 falls back to the canvas's device-pixel attribute width (2× on
+     retina) and overflows horizontally */
+  .net-field{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .line-field{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+  .line-field path{
+    stroke:var(--gold);stroke-width:.08;fill:none;stroke-opacity:0;
+    stroke-dasharray:1;stroke-dashoffset:1;
+    transition:stroke-dashoffset 1.3s var(--ease),stroke-opacity 1.3s var(--ease);
+  }
+  .line-field.in path{stroke-dashoffset:0;stroke-opacity:.13}
+  .line-field.in path:nth-child(2){transition-delay:.12s}
+  .line-field.in path:nth-child(3){transition-delay:.24s}
+  .line-field.in path:nth-child(4){transition-delay:.36s}
+  .line-field.in path:nth-child(5){transition-delay:.48s}
+  .finale .net-field,.finale .line-field{z-index:0}
+  /* lift finale CONTENT above its background canvas — but NOT the canvas itself
+     (a relative/in-flow canvas would feed back into the finale height → infinite grow) */
+  .block .wrap,.finale > *:not(canvas){position:relative;z-index:2}
+
+  /* ---- scroll reveal ---- */
+  .reveal{opacity:0;transform:translateY(26px);filter:blur(14px);transition:opacity .8s ease,transform .8s var(--ease),filter .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none;filter:blur(0)}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+  .reveal.d4{transition-delay:.32s}.reveal.d5{transition-delay:.40s}
+
+  /* ---- responsive ---- */
+  @media(max-width:860px){
+    .cards{grid-template-columns:1fr}
+    .venue-grid{grid-template-columns:1fr;gap:34px}
+    .cd-secs{display:none}
+  }
+  @media(max-width:560px){
+    .bingo .cell{padding:12px;font-size:11px;min-height:88px}
+    .bingo .cell.free{font-size:12px}
+    .form input{min-width:100%}
+    .countdown{gap:10px}
+    .cd-box{min-width:70px;padding:12px 10px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;filter:none;transition:none}
+    .line-field path{stroke-dashoffset:0;stroke-opacity:.13;transition:none}
+    .chip .dot{animation:none}
+    .btn:hover{transform:none}
+    .card:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="brand">Leverage<b>BLK</b></a>
+    <a href="index.html#waitlist" class="cta-ghost">Join the waitlist →</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas class="net-field" data-density="500"></canvas>
+  <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <path pathLength="1" d="M5,0 L30,100"/>
+    <path pathLength="1" d="M45,0 L70,100"/>
+    <path pathLength="1" d="M80,0 L95,100"/>
+    <path pathLength="1" d="M0,40 L100,75"/>
+    <path pathLength="1" d="M100,20 L0,65"/>
+  </svg>
+  <div class="wrap">
+    <div class="inner">
+      <span class="chip"><span class="dot"></span>Vol. 2 · Austin, TX · Free Entry</span>
+      <h1>Culture Connects: ATX</h1>
+      <div class="details-strip">SUN · 07.12.26 · 12PM–2PM · KickingIt ATX · The Domain</div>
+      <p class="sub">A fashion industry mixer for Austin's creative class. Hosted inside <b>KickingIt ATX</b> at The Domain — the city's home for fashion and culture.</p>
+
+      <div class="countdown" id="countdown" aria-label="Countdown to the event">
+        <div class="cd-box"><div class="num" id="cd-days">–</div><div class="lab">Days</div></div>
+        <div class="cd-box"><div class="num" id="cd-hours">–</div><div class="lab">Hours</div></div>
+        <div class="cd-box"><div class="num" id="cd-mins">–</div><div class="lab">Mins</div></div>
+        <div class="cd-box cd-secs"><div class="num" id="cd-secs">–</div><div class="lab">Secs</div></div>
+      </div>
+
+      <a href="#rsvp" class="btn" id="hero-cta">Secure your spot ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- 01 — THE VIBE -->
+<section class="block">
+  <div class="wrap">
+    <span class="eyebrow reveal">01 — What this is</span>
+    <h2 class="lead-head reveal">No stiff handshakes. No name tag lanyards. No boring panels. Just the culture doing what it does.</h2>
+    <p class="body-copy reveal d1">100 of Austin's most expressive, ambitious, and culture-forward professionals in one room — dressed how they want, connecting how they want, building relationships that actually last.</p>
+    <p class="body-copy reveal d2">If you sit at the intersection of <strong>fashion, business, and Black &amp; Brown excellence</strong> — this room was built for you.</p>
+    <p class="body-copy reveal d3">Vol. 2 of a series coming to Houston, Dallas, and beyond. Get in while it's intimate.</p>
+    <p class="pullquote reveal d2">In two years, you'll be telling people you were there from <em>the jump.</em></p>
+  </div>
+</section>
+
+<!-- 02 — INSIDE THE ROOM -->
+<section class="block">
+  <div class="wrap">
+    <span class="eyebrow reveal">02 — What's happening</span>
+    <h2 class="lead-head reveal">Three ways to <span class="gold">show up.</span></h2>
+    <div class="cards">
+      <div class="card reveal d1">
+        <div class="num">01</div>
+        <h3>Networking Bingo</h3>
+        <p>Nine squares. Nine real challenges designed to get you off your phone and into the room. Find someone who designs their own clothes. Give a genuine compliment on a fit. Connect with a content creator. Exchange info with a photographer. Complete your card and you might walk away with a swag bag. Two rounds. Two winners. All community.</p>
+      </div>
+      <div class="card reveal d2">
+        <div class="num">02</div>
+        <h3>Fit Checks &amp; Sneaker Cam</h3>
+        <p>Your outfit is your opener. Host Kee works the room from jump — live fit checks, capturing standout looks, putting the best fits and freshest kicks on camera in real time. Midway through, standout guests get pulled for quick-fire interviews: your style origin, your brand, your creative journey. The footage goes straight to social.</p>
+      </div>
+      <div class="card reveal d3">
+        <div class="num">03</div>
+        <h3>Vendor Tables</h3>
+        <p>Three curated Black-owned brands. Their racks and tables live inside KickingIt ATX. Shop, discover, and support while you network.</p>
+      </div>
+    </div>
+
+    <!-- Networking Bingo card visual -->
+    <div class="bingo-wrap reveal">
+      <span class="eyebrow">Your networking bingo card</span>
+      <div class="bingo" aria-hidden="true">
+        <div class="cell">Find someone who designs their own clothes</div>
+        <div class="cell">Give a genuine compliment on someone's fit</div>
+        <div class="cell">Connect with a content creator</div>
+        <div class="cell">Exchange info with a photographer</div>
+        <div class="cell free">Find someone who's been to a fashion week</div>
+        <div class="cell">Meet someone from a city you've never been to</div>
+        <div class="cell">Find a Black-owned brand you didn't know about</div>
+        <div class="cell">Connect with someone who works in music</div>
+        <div class="cell">Find someone whose hustle inspires you</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 — THE GAME / PANEL -->
+<section class="block">
+  <canvas class="net-field" data-density="350"></canvas>
+  <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <path pathLength="1" d="M10,0 L35,100"/>
+    <path pathLength="1" d="M55,0 L80,100"/>
+    <path pathLength="1" d="M0,25 L100,60"/>
+    <path pathLength="1" d="M100,10 L0,80"/>
+  </svg>
+  <div class="wrap">
+    <span class="eyebrow reveal">03 — The panel</span>
+    <h2 class="lead-head reveal">The mixer is the warmup.<br><span class="gold">The panel is where the real education begins.</span></h2>
+    <p class="body-copy reveal d1">Immediately following close out, Culture Connects: ATX transitions into an exclusive fashion industry panel — a raw, unfiltered conversation with real professionals who have built careers, brands, and businesses at the intersection of fashion, culture, and entrepreneurship.</p>
+    <ul class="topics">
+      <li class="reveal d1">How to break into fashion as an independent creative</li>
+      <li class="reveal d2">Building and monetizing your personal brand</li>
+      <li class="reveal d3">The business side: from production to distribution</li>
+      <li class="reveal d4">Navigating the industry as a Black &amp; Brown entrepreneur</li>
+      <li class="reveal d5">Turning your passion for style into a sustainable career</li>
+    </ul>
+    <p class="close-line reveal">Come with questions. Leave with <b>answers, connections, and a clear next step</b> for your creative journey.</p>
+  </div>
+</section>
+
+<!-- 04 — THE VENUE -->
+<section class="block">
+  <div class="wrap">
+    <span class="eyebrow reveal">Hosted inside</span>
+    <div class="venue-grid">
+      <div class="reveal">
+        <h2 class="lead-head" style="margin-top:14px">KickingIt ATX</h2>
+        <p class="body-copy">The Domain · 3200 Palm Way, Suite 156 · Austin, TX 78758</p>
+        <p class="body-copy">Austin's home for fashion and culture — one of, if not the, biggest urban sneaker stores in the city, with a second location in San Antonio. This is the right room for this conversation.</p>
+        <div class="venue-partners">LeverageBLK <span class="x">×</span> KickingIt Austin</div>
+        <div class="venue-note">
+          <span class="tag">From LeverageBLK</span>
+          <p>While you're here — the platform being built for exactly the people in this room is accepting its first Legacy members. <a href="index.html#waitlist">Join the waitlist at the door or right here →</a></p>
+        </div>
+        <img class="flyer" src="assets/culture-connect-flyer.png" alt="Culture Connects: ATX event flyer" loading="lazy" onerror="this.style.display='none'">
+      </div>
+      <div class="reveal d1">
+        <div class="addr-block">
+          <span class="muted">Austin location</span>
+          KickingIt ATX<br>3200 Palm Way, Suite 156<br>Austin, TX 78758
+        </div>
+        <iframe class="map-embed" title="KickingIt ATX — 3200 Palm Way, Austin TX 78758"
+          src="https://www.google.com/maps?q=3200+Palm+Way,+Suite+156,+Austin,+TX+78758&output=embed"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 — RSVP -->
+<section class="block" id="rsvp">
+  <div class="wrap">
+    <div class="finale">
+      <canvas class="net-field" data-density="350"></canvas>
+      <span class="eyebrow reveal" style="justify-content:center">Secure your spot</span>
+      <h2 class="reveal" style="margin-top:16px">The room holds 100. <span class="gold">Don't find out it's full at the door.</span></h2>
+      <p class="reveal d1">Free entry. No dress code. Just show up as you.</p>
+      <form class="form" id="form-rsvp" novalidate>
+        <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="text"  name="name"  placeholder="Your name" autocomplete="name" required>
+        <input type="text"  name="field" placeholder="Field of work" required>
+        <input type="tel"   name="phone" placeholder="Phone — we'll text you updates" autocomplete="tel">
+        <input type="email" name="email" placeholder="Email (optional)" autocomplete="email">
+        <button type="button" class="btn">Secure your spot</button>
+      </form>
+      <p class="form-err" id="err-rsvp" style="text-align:center">Add a phone number or email so we can confirm your spot.</p>
+      <p class="form-note reveal" style="text-align:center;opacity:.6;max-width:46ch;margin-left:auto;margin-right:auto">By RSVPing, you agree to receive text updates about Culture Connects: ATX from LeverageBLK. Msg &amp; data rates may apply. Reply STOP to opt out.</p>
+      <div class="success" id="ok-rsvp">
+        <h4>You're in.</h4>
+        <p>See you Sunday, July 12 at KickingIt ATX. We'll text you the details closer to the date.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a href="index.html" class="brand">Leverage<b>BLK</b></a>
+      <div class="tagline">Real connections, real leverage</div>
+    </div>
+    <div class="meta">
+      <a href="index.html">← Back to LeverageBLK.com</a><br>
+      © 2026 LeverageBLK
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Supabase client ===== -->
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  window.supabase = createClient(
+    'https://mkxtkjitjgzjkflhahto.supabase.co',
+    'sb_publishable_dKsJQFjb3V1XTMwOeFMTgw_0mRtjydR'
+  );
+</script>
+
+<!-- ===== Firebase Analytics scaffold (logs to console until configured) ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
+  };
+  let analytics = null;
+  try{
+    if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY"){
+      const app = initializeApp(firebaseConfig);
+      analytics = getAnalytics(app);
+      logEvent(analytics,'page_view',{page_title:'culture_connects_atx'});
+    }
+  }catch(e){ console.warn('Firebase Analytics not configured yet:', e); }
+  window.trackEvent = (name, params={}) => {
+    if(analytics) logEvent(analytics, name, params);
+    else console.log('[track]', name, params);
+  };
+</script>
+
+<!-- ===== RSVP capture ===== -->
+<script>
+  function isPhone(v){ const d = v.replace(/\D/g,''); return d.length >= 10 && d.length <= 15; }
+  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+
+  (function bindRsvp(){
+    const form    = document.getElementById('form-rsvp');
+    const ok      = document.getElementById('ok-rsvp');
+    const errEl   = document.getElementById('err-rsvp');
+    const honeypot= form.querySelector('.hp-field');
+    const nameEl  = form.querySelector('input[name="name"]');
+    const fieldEl = form.querySelector('input[name="field"]');
+    const phoneEl = form.querySelector('input[type="tel"]');
+    const emailEl = form.querySelector('input[type="email"]');
+    const btn     = form.querySelector('button');
+    const inputs  = [nameEl, fieldEl, phoneEl, emailEl];
+
+    function clearErrors(){ inputs.forEach(i => i.style.borderColor = ''); errEl.style.display = 'none'; }
+
+    async function submit(){
+      clearErrors();
+      if(honeypot && honeypot.value){ return; } // bot
+
+      let valid = true, firstInvalid = null;
+      function flag(el){ el.style.borderColor = '#c0563f'; if(!firstInvalid) firstInvalid = el; valid = false; }
+      if(!nameEl.value.trim())  flag(nameEl);
+      if(!fieldEl.value.trim()) flag(fieldEl);
+      const phoneVal = phoneEl.value.trim(), emailVal = emailEl.value.trim();
+      if(phoneVal && !isPhone(phoneVal)) flag(phoneEl);
+      if(emailVal && !isEmail(emailVal)) flag(emailEl);
+      if(!phoneVal && !emailVal){ errEl.style.display = 'block'; valid = false; }
+      if(!valid){ if(firstInvalid) firstInvalid.focus(); return; }
+
+      btn.disabled = true; btn.textContent = 'Saving…';
+      const name = nameEl.value.trim(), field = fieldEl.value.trim();
+      const phone = phoneVal || null, email = emailVal || null;
+      try{
+        const { error } = await window.supabase
+          .from('waitlist')
+          .insert({ name: name || null, phone, email, field: field || null, source: 'event_atx' });
+        if(error && error.code !== '23505'){   // 23505 = dup phone → treat as success
+          console.error('Supabase error:', error);
+          btn.disabled = false; btn.textContent = 'Secure your spot';
+          return;
+        }
+      }catch(e){
+        console.error('Insert failed:', e);
+        btn.disabled = false; btn.textContent = 'Secure your spot';
+        return;
+      }
+      window.trackEvent('event_rsvp', { source: 'culture_connects_atx' });
+      form.style.display = 'none';
+      errEl.style.display = 'none';
+      ok.classList.add('show');
+    }
+
+    btn.addEventListener('click', submit);
+    inputs.forEach(i => {
+      i.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+      i.addEventListener('input', () => { i.style.borderColor = ''; });
+    });
+  })();
+
+  // ---- countdown to July 12, 2026 12:00 PM CDT ----
+  (function countdown(){
+    const el = document.getElementById('countdown');
+    if(!el) return;
+    const target = new Date('2026-07-12T12:00:00-05:00').getTime();
+    const set = (id, v) => { const n = document.getElementById(id); if(n) n.textContent = String(v).padStart(2,'0'); };
+    function tick(){
+      let diff = target - Date.now();
+      if(diff <= 0){ el.style.display = 'none'; clearInterval(timer); return; }
+      const d = Math.floor(diff / 86400000); diff -= d * 86400000;
+      const h = Math.floor(diff / 3600000);  diff -= h * 3600000;
+      const m = Math.floor(diff / 60000);    diff -= m * 60000;
+      const s = Math.floor(diff / 1000);
+      set('cd-days', d); set('cd-hours', h); set('cd-mins', m); set('cd-secs', s);
+    }
+    tick();
+    const timer = setInterval(tick, 1000);
+  })();
+
+  // ---- track hero CTA ----
+  document.getElementById('hero-cta').addEventListener('click', () => window.trackEvent('cta_click', { target: 'rsvp' }));
+</script>
+
+<!-- ===== StarField (NetField) + LineField + reveal ===== -->
+<script>
+(function(){
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(0.22,1,0.36,1)';
+
+  // ---- scroll reveal ----
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---- line field draw-in ----
+  const lineIO = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); lineIO.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.line-field').forEach(s => lineIO.observe(s));
+
+  // ---- network field (gold/cream twinkle) ----
+  if(!noMotion){
+    const GOLD = '201,168,76', CREAM = '250,249,246';
+    class NetField {
+      constructor(cv){
+        this.cv = cv; this.ctx = cv.getContext('2d');
+        this.n = parseInt(cv.dataset.density, 10) || 500;
+        this.pts = []; this.t = 0; this.ts = null; this.raf = null; this.live = false;
+        this._ro = new ResizeObserver(() => this.resize()); this._ro.observe(cv.parentElement);
+        this.resize();
+        cv.style.opacity = '0'; cv.style.transition = `opacity 1.4s ${EASE}`;
+        requestAnimationFrame(() => requestAnimationFrame(() => { cv.style.opacity = '1'; }));
+        this.start();
+      }
+      resize(){
+        const r = this.cv.parentElement.getBoundingClientRect();
+        if(!r.width || !r.height) return;
+        this.dpr = Math.min(devicePixelRatio || 1, 2);
+        this.w = r.width; this.h = r.height;
+        this.cv.width = this.w * this.dpr; this.cv.height = this.h * this.dpr;
+        this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+        const mobile = innerWidth < 760;
+        const count = Math.round(this.n * (mobile ? 0.40 : 1));
+        this.pts = Array.from({ length: count }, () => ({
+          x: Math.random() * this.w, y: Math.random() * this.h,
+          r: Math.random() < 0.92 ? 0.25 + Math.random() * 0.55 : 1.15 + Math.random() * 0.65,
+          base: 0.20 + Math.random() * 0.70,
+          spd: 0.40 + Math.random() * 1.40, off: Math.random() * Math.PI * 2,
+          gold: Math.random() < 0.35
+        }));
+      }
+      start(){ if(this.live) return; this.live = true; this.ts = null; this.raf = requestAnimationFrame(ts => this.tick(ts)); }
+      stop(){ this.live = false; if(this.raf){ cancelAnimationFrame(this.raf); this.raf = null; } }
+      tick(ts){
+        if(!this.live) return;
+        if(this.ts !== null) this.t += (ts - this.ts) * 0.001;
+        this.ts = ts;
+        const { ctx, w, h, t } = this;
+        ctx.clearRect(0, 0, w, h);
+        for(const p of this.pts){
+          const tw = 0.5 + 0.5 * Math.sin(t * p.spd + p.off);
+          const a = Math.min(p.base * (0.35 + 0.65 * tw), 1);
+          const c = p.gold ? GOLD : CREAM;
+          if(p.r > 1.1){
+            const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
+            gr.addColorStop(0, `rgba(${c},${(a * 0.45).toFixed(3)})`); gr.addColorStop(1, `rgba(${c},0)`);
+            ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.fillStyle = `rgba(${c},${a.toFixed(3)})`;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+        }
+        this.raf = requestAnimationFrame(ts => this.tick(ts));
+      }
+    }
+    const fields = [];
+    document.querySelectorAll('.net-field').forEach(c => fields.push(new NetField(c)));
+    document.addEventListener('visibilitychange', () => {
+      if(document.hidden) fields.forEach(f => f.stop()); else fields.forEach(f => f.start());
+    });
+  }
+})();
+</script>
+</body>
+</html>
