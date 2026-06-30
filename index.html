@@ -25,7 +25,7 @@
     --ease:cubic-bezier(0.22,1,0.36,1);
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
   body{
     background:var(--ink);
     color:var(--cream);
@@ -33,6 +33,8 @@
     line-height:1.55;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+    overscroll-behavior-x:none;
+    width:100%;
     position:relative;
   }
   /* grain + atmosphere */
@@ -70,6 +72,16 @@
     border:1px solid var(--gold-line);padding:10px 18px;border-radius:999px;transition:.25s;
   }
   .nav a.cta-ghost:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .sound-toggle{
+    width:34px;height:34px;border-radius:50%;border:1px solid var(--gold-line);background:var(--gold-soft);
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.25s;flex:none;padding:0;
+  }
+  .sound-toggle:hover{border-color:var(--gold)}
+  .sound-toggle svg{width:16px;height:16px;stroke:var(--gold);fill:none}
+  .sound-toggle .icon-on{display:none}
+  .sound-toggle.is-on .icon-off{display:none}
+  .sound-toggle.is-on .icon-on{display:block}
 
   /* ---- hero ---- */
   .hero{min-height:100svh;display:flex;align-items:center;padding:140px 0 90px;position:relative;overflow:clip}
@@ -83,11 +95,16 @@
   .hero h1{
     font-size:clamp(2.7rem,7.4vw,5.7rem);margin:30px 0 0;max-width:14ch;
   }
+  .h1-line{display:block}
   .hero h1 .struck{position:relative;color:var(--cream-faint);font-weight:500}
   .hero h1 .struck::after{
     content:"";position:absolute;left:-2%;right:-2%;top:54%;height:3px;background:var(--gold);
-    transform:scaleX(0);transform-origin:left;animation:strike 1s 1.85s cubic-bezier(.7,0,.2,1) forwards;
+    transform:scaleX(0);transform-origin:left;animation:strike 1s 200ms cubic-bezier(.7,0,.2,1) forwards;
+    animation-play-state:paused;
   }
+  /* held paused until the hero entrance fires, then plays — same fix as the rest of
+     the hero: a fixed page-load delay would settle while the hero is hidden behind the globe */
+  .hero-animate.in .struck::after{animation-play-state:running}
   @keyframes strike{to{transform:scaleX(1)}}
   .hero h1 .in{color:var(--gold);font-style:italic;font-weight:500}
   .hero .sub{font-size:clamp(1rem,1.5vw,1.18rem);color:var(--cream-dim);max-width:46ch;margin:28px 0 0;font-weight:300}
@@ -310,7 +327,9 @@
      by the ScrollTrigger JS during the pinned experience; in the reduced-motion / no-GSAP
      fallback the hero stays in normal flow right below the globe — no gap either way) */
   #globe-hero-wrapper{position:relative}
-  #globe-moment{height:100vh;position:relative;overflow:hidden;z-index:1}
+  /* pointer-events:none so clicks fall through to the hero underneath once the dissolve
+     reveals it — the gm-cta link re-enables itself locally (pointer-events:auto, below) */
+  #globe-moment{height:100vh;position:relative;overflow:hidden;z-index:1;pointer-events:none}
   /* Three.js WebGL canvas — injected by JS at scene start */
   #globe-moment .globe-canvas{
     position:absolute;inset:0;width:100%;height:100%;
@@ -365,6 +384,7 @@
     height:100%;
     overflow:hidden;
     background:#000;
+    pointer-events:none;
   }
   .globe-crop img{
     width:100%;
@@ -416,11 +436,14 @@
     background:rgba(250,249,246,.04);border:1px solid var(--gold-line);
     backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:14px;
     padding:13px 16px;box-shadow:0 18px 44px -28px rgba(0,0,0,.9);
-    opacity:0;transform:translate3d(var(--px,0px),var(--py,0px),0) scale(.88);
-    transition:opacity .9s var(--ease),transform .9s var(--ease);
+    opacity:0;
+    /* Jitter-informed entrance: drift in from the card's side (--dx) with a slight tilt
+       (--rot) that settles via a gentle spring. --px/--py are the live parallax offsets. */
+    transform:translate3d(calc(var(--px,0px) + var(--dx,0px)),var(--py,0px),0) scale(.9) rotate(var(--rot,0deg));
+    transition:opacity .8s var(--ease),transform .85s cubic-bezier(0.34,1.56,0.64,1);
     will-change:transform,opacity;max-width:210px;
   }
-  .float-card.in{opacity:1;transform:translate3d(var(--px,0px),var(--py,0px),0) scale(1)}
+  .float-card.in{opacity:1;transform:translate3d(var(--px,0px),var(--py,0px),0) scale(1) rotate(0deg)}
   /* edge cards: sit just left of the content column, in the margin gutter — only
      when that gutter is wide enough to fit them without touching the headline */
   .float-card.fc-edge{left:calc((100% - var(--maxw)) / 2 - 180px);max-width:168px}
@@ -441,12 +464,24 @@
   .reveal.in{opacity:1;transform:none;filter:blur(0)}
   @keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
+  /* hero entrance — fires when the globe dissolve reveals the hero, not on page load
+     (see .in toggled by triggerHeroEntrance() — hero sits hidden behind the globe
+     until then, so a load-timer entrance would settle off-screen and never be seen) */
+  .hero-animate{
+    opacity:0;transform:translateY(20px);filter:blur(14px);
+    transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);
+  }
+  .hero-animate.in{opacity:1;transform:none;filter:blur(0)}
+  /* CTA button gets a subtle scale-in instead of the shared translateY drift */
+  .btn.hero-animate{transform:scale(.96)}
+
   @media(prefers-reduced-motion:reduce){
     .intro{display:none}
     .brand.intro-pending{opacity:1}
     .reveal{opacity:1;transform:none;filter:none;transition:none}
     .line-field path{stroke-dashoffset:0;stroke-opacity:.13;transition:none}
     .float-card{opacity:1;transform:none;transition:none}
+    .hero-animate{opacity:1;transform:none;filter:none;transition:none}
     .hero-globe{animation:none;transition:none;opacity:.55;transform:none}
     .globe-fallback{opacity:1}
     .globe-scroll-hint{animation:none}
@@ -483,9 +518,47 @@
 <header>
   <div class="wrap nav">
     <div class="brand intro-pending" id="nav-brand">Leverage<b>BLK</b></div>
-    <a href="#hero" class="cta-ghost" data-track="nav_invite">Request your invite</a>
+    <div class="nav-right">
+      <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Play ambient sound">
+        <svg class="icon-off" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><line x1="16" y1="9" x2="21" y2="14"/><line x1="21" y1="9" x2="16" y2="14"/></svg>
+        <svg class="icon-on" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>
+      </button>
+      <a href="#hero" class="cta-ghost" data-track="nav_invite">Request your invite</a>
+    </div>
   </div>
 </header>
+<audio id="bg-audio" src="assets/ambient-loop.mp3" loop preload="none"></audio>
+<script>
+(function(){
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('sound-toggle');
+  if(!audio || !btn) return;
+  audio.volume = 0.35;
+  let on = localStorage.getItem('bgSound') === 'on';
+
+  function paint(){
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', on ? 'Mute ambient sound' : 'Play ambient sound');
+  }
+  paint();
+
+  // browsers block audio.play() until a user gesture — if the visitor previously
+  // had sound on, resume it on their first interaction anywhere on the page
+  if(on){
+    const resume = () => { audio.play().catch(()=>{}); document.removeEventListener('pointerdown', resume); };
+    document.addEventListener('pointerdown', resume, { once:true });
+  }
+
+  btn.addEventListener('click', () => {
+    on = !on;
+    localStorage.setItem('bgSound', on ? 'on' : 'off');
+    if(on) audio.play().catch(()=>{}); else audio.pause();
+    paint();
+    if(window.trackEvent) window.trackEvent('cta_click', { target:'ambient_sound', state: on ? 'on' : 'off' });
+  });
+})();
+</script>
 
 <!-- globe-moment + hero share one wrapper so the hero is co-located behind the globe:
      when the pin releases there is no scroll-distance to travel — the hero is already there -->
@@ -529,29 +602,33 @@
     <path pathLength="1" d="M6,40 L44,20 L78,52 L98,22"/>
   </svg>
   <div class="float-layer" aria-hidden="true">
-    <div class="float-card fc-edge" style="top:16%"      data-depth="22"><div class="fc-label">Co-Sign received</div><div class="fc-detail">+1 reputation</div></div>
-    <div class="float-card" style="top:30%;right:3%"      data-depth="-30"><div class="fc-label">Warm intro available</div><div class="fc-detail cream">via The Room</div></div>
-    <div class="float-card fc-edge" style="bottom:24%"    data-depth="36"><div class="fc-label">Reputation signal · +1</div><div class="fc-detail">The Tap</div></div>
-    <div class="float-card" style="bottom:14%;right:7%"   data-depth="-18"><div class="fc-label">5 lifetime co-signs</div><div class="fc-detail">spend them well</div></div>
-    <div class="float-card" style="top:8%;right:24%"      data-depth="14"><div class="fc-label">The Room · 90 days</div><div class="fc-detail cream">warm-intro access</div></div>
-    <div class="float-card" style="bottom:1.5%;left:30%"  data-depth="-26"><div class="fc-label">Culture credential</div><div class="fc-detail">accepted</div></div>
+    <div class="float-card fc-edge" style="top:16%;--dx:-44px;--rot:-1.2deg"      data-depth="22"><div class="fc-label">Co-Sign received</div><div class="fc-detail">+1 reputation</div></div>
+    <div class="float-card" style="top:30%;right:3%;--dx:44px;--rot:1.2deg"        data-depth="-30"><div class="fc-label">Warm intro available</div><div class="fc-detail cream">via The Room</div></div>
+    <div class="float-card fc-edge" style="bottom:24%;--dx:-44px;--rot:-1.2deg"    data-depth="36"><div class="fc-label">Reputation signal · +1</div><div class="fc-detail">The Tap</div></div>
+    <div class="float-card" style="bottom:14%;right:7%;--dx:44px;--rot:1.2deg"     data-depth="-18"><div class="fc-label">5 lifetime co-signs</div><div class="fc-detail">spend them well</div></div>
+    <div class="float-card" style="top:8%;right:24%;--dx:44px;--rot:1.2deg"        data-depth="14"><div class="fc-label">The Room · 90 days</div><div class="fc-detail cream">warm-intro access</div></div>
+    <div class="float-card" style="bottom:1.5%;left:30%;--dx:-44px;--rot:-1.2deg"  data-depth="-26"><div class="fc-label">Culture credential</div><div class="fc-detail">accepted</div></div>
   </div>
   <div class="wrap">
-    <span class="chip"><span class="dot"></span>Legacy waitlist · Now open</span>
-    <h1>The algorithm <span class="struck">filtered</span> you out. We let you <span class="in">in</span>.</h1>
-    <p class="sub">Leverage BLK is the professional network where your culture is your credential — built for <b>Black and Brown professionals</b> who are done being screened out by software that never met them.</p>
+    <span class="chip hero-animate" data-delay="0"><span class="dot"></span>Legacy waitlist · Now open</span>
+    <h1>
+      <span class="h1-line hero-animate" data-delay="80">The algorithm</span>
+      <span class="h1-line hero-animate" data-delay="160"><span class="struck">filtered</span> you out. We</span>
+      <span class="h1-line hero-animate" data-delay="240">let you <span class="in">in</span>.</span>
+    </h1>
+    <p class="sub hero-animate" data-delay="440">Leverage BLK is the professional network where your culture is your credential — built for <b>Black and Brown professionals</b> who are done being screened out by software that never met them.</p>
 
     <div id="hero-form-fields">
       <div class="form" id="form-hero">
         <!-- honeypot: bots fill this, humans don't -->
         <input class="hp-field" type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
-        <input type="text" name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required>
-        <input type="text" name="field" placeholder="Field of work" aria-label="Field of work" autocomplete="organization-title" required>
+        <input class="hero-animate" data-delay="500" type="text" name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required>
+        <input class="hero-animate" data-delay="560" type="text" name="field" placeholder="Field of work" aria-label="Field of work" autocomplete="organization-title" required>
         <small style="width:100%;font-size:11px;color:var(--cream-faint);letter-spacing:.04em">Phone preferred — we'll text you first</small>
-        <input type="tel" inputmode="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel">
-        <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email">
+        <input class="hero-animate" data-delay="620" type="tel" inputmode="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel">
+        <input class="hero-animate" data-delay="680" type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email">
         <p class="form-err" style="display:none;width:100%;margin:0;font-size:13px;color:#c0563f">Please add a phone number or email so we can reach you.</p>
-        <button class="btn">Request your invite</button>
+        <button class="btn hero-animate" data-delay="740">Request your invite</button>
       </div>
       <p class="form-note">Founding members get first access to <b>The Room</b> — by text, the moment it opens.</p>
       <p class="form-note" style="opacity:.55;margin-top:6px">By joining, you agree to receive updates from LeverageBLK by text or email. Msg &amp; data rates may apply. Reply STOP to opt out.</p>
@@ -564,6 +641,12 @@
   </div>
 </section>
 </div><!-- /#globe-hero-wrapper -->
+<!-- hero is position:absolute inside the wrapper during the GSAP path, so it
+     contributes zero height to the wrapper's box — on mobile, where hero's actual
+     content (headline + 4 form fields + notes) is far taller than the globe's 100vh,
+     #why would start overlapping hero's lower content without this. Height is set by
+     JS (syncHeroOverflowSpacer) to exactly cover hero's overflow past the wrapper. -->
+<div id="hero-overflow-spacer" aria-hidden="true" style="height:0"></div>
 
 <!-- 01 · ADVOCACY / THE WHY -->
 <section class="block" id="why">
@@ -703,7 +786,7 @@
       <div class="tagline">Real connections, real leverage</div>
     </div>
     <div class="meta">
-      <div>Founded by <b>Malcolm</b> &amp; <b>David Butler</b></div>
+      <div>Founded by <b>Malcolm Purefoy</b> &amp; <b>David Butler</b></div>
       <div>Founding waitlist · 2026</div>
     </div>
   </div>
@@ -1146,10 +1229,47 @@
           card.classList.add('in');
           // after entrance settles (0.9s): strip transitions so lerp drives parallax directly
           setTimeout(()=>{ card.style.transition = 'none'; }, 960);
-        }, noMotion ? 0 : 220 + i * 110);
+        }, noMotion ? 0 : i * 90);
       });
     }
-    noMotion ? revealCards() : setTimeout(revealCards, 1700);
+
+    // ─── HERO ENTRANCE — retriggered when the globe dissolve reveals the hero ────
+    // The hero sits hidden (opacity:0) behind the globe until the GSAP ScrollTrigger
+    // dissolve crosses ~78% progress. Firing entrance on a page-load timer means the
+    // Jitter drift-in (and everything else) settles while invisible — never seen.
+    // window.__triggerHeroEntrance is called from the dissolve onUpdate handler below.
+    const heroAnimEls = Array.from(document.querySelectorAll('.hero-animate'));
+    let heroEntranceFired = false;
+    function triggerHeroEntrance(){
+      if(heroEntranceFired) return;
+      heroEntranceFired = true;
+      heroAnimEls.forEach(el => setTimeout(() => el.classList.add('in'), parseInt(el.dataset.delay, 10) || 0));
+      revealCards();
+    }
+    window.__triggerHeroEntrance = triggerHeroEntrance;
+
+    if(noMotion){
+      // reduced motion: jump straight to the settled state, no animation, no wait
+      heroEntranceFired = true;
+      heroAnimEls.forEach(el => el.classList.add('in'));
+      revealCards();
+    } else if(location.hash === '#hero'){
+      // fallback: a direct deep link to #hero bypasses the globe scroll-through
+      // entirely (the GSAP dissolve trigger never fires) — reveal shortly after
+      // the hero is actually visible instead of leaving it hidden forever.
+      const heroFallbackEl = document.querySelector('.hero');
+      if(heroFallbackEl){
+        const heroFallbackIO = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if(e.isIntersecting){
+              setTimeout(triggerHeroEntrance, 2000);
+              heroFallbackIO.disconnect();
+            }
+          });
+        }, { threshold: 0.1 });
+        heroFallbackIO.observe(heroFallbackEl);
+      }
+    }
 
     // ─── 4. HERO PARALLAX ────────────────────────────────────────────
     // rAF lerp loop — no CSS transition after entrance, lerp IS the easing.
@@ -1493,6 +1613,8 @@
   // ── dissolve state (driven by the GSAP ScrollTrigger pin/scrub below) ──
   let isTransitioning = false;   // true once particles scatter — freezes gyro tilt, keeps render alive
   let scatterFired    = false;   // one-shot latch for the particle scatter (reset on scroll-back)
+  let dissolveDone     = false;  // latch: dissolve has fully completed (reset on scroll-back)
+  let heroEntranceTimer = null;  // pending "wait 800ms after dissolve, then enter" timer
   const txTimers = [];           // setTimeout refs cleared on cleanup
   const txRafs   = [];           // rAF refs cancelled on cleanup
   // tiny self-cleaning rAF tween: calls onUpdate(easedT) each frame for `dur` ms
@@ -1661,50 +1783,118 @@
   if(window.gsap && window.ScrollTrigger && wrapper){
     gsap.registerPlugin(ScrollTrigger);
 
-    if(noMotion){
-      // reduced motion: NO pin, hero stays in normal flow below the globe — just crossfade
-      // the crop out as the globe scrolls past; the hero is right there underneath.
-      ScrollTrigger.create({
-        trigger: section, start: 'top top', end: '+=100%', scrub: true,
-        onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); driveCopy(self.progress, false); },
-        onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
-      });
-    } else {
-      // co-locate the hero behind the globe (absolute top:0 inside the relative wrapper),
-      // hidden until the crossfade. Set once — not toggled — so it's always in place.
-      if(heroEl){
-        Object.assign(heroEl.style, { position:'absolute', top:'0', left:'0', width:'100%', zIndex:'0', opacity:'0' });
-      }
-      // pin the WRAPPER (not the globe section) so the spacer accounts for both together
-      ScrollTrigger.create({
-        trigger: wrapper,
-        start: 'top top',
-        end: isMobile ? '+=80%' : '+=120%',   // pin length / zoom duration
-        pin: wrapper,
-        scrub: SCRUB,           // scroll drives the animation directly, smoothed
-        onUpdate: self => {
-          const p = self.progress;
-          visible = true;       // keep the render loop alive throughout the pin
-          // drive the zoom toward the NYC hub
-          cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
-          driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
-          // dissolve in the final ~22% — globe stays visible/zooming longer, then a quick
-          // fade. The hero crossfades in BEHIND the globe (inverse opacity) so there's no
-          // black: globe 1→0 while hero 0→1, completing exactly at pin-release.
-          if(p > 0.78){
-            const d = (p - 0.78) / 0.22;
-            cropEl.style.opacity = String(1 - d);
-            if(heroEl) heroEl.style.opacity = String(d);     // crossfade hero in
-            if(!scatterFired){ scatterParticles(); scatterFired = true; }
-          } else {
-            cropEl.style.opacity = '1';
-            if(heroEl) heroEl.style.opacity = '0';           // hero hidden behind the opaque globe
-            if(scatterFired){ restoreParticles(); scatterFired = false; }   // scrubbed back up
-          }
-        },
-        onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
-      });
+    // pre-position the hero NOW (before init) so it never flashes in normal flow on load
+    if(!noMotion && heroEl){
+      Object.assign(heroEl.style, { position:'absolute', top:'0', left:'0', width:'100%', zIndex:'0', opacity:'0' });
     }
+
+    // hero is now position:absolute → contributes 0 height to the wrapper, so on
+    // narrow/tall viewports (where hero's stacked form content is much taller than
+    // the globe's 100vh) #why would start overlapping hero's lower content. Keep a
+    // dedicated spacer (NOT the wrapper itself — touching the wrapper's own height
+    // would also inflate GSAP's pin-spacer and change the scroll-distance/feel of
+    // the dissolve) sized to exactly cover that overflow.
+    const overflowSpacer = document.getElementById('hero-overflow-spacer');
+    function syncHeroOverflowSpacer(){
+      if(noMotion || !heroEl || !overflowSpacer) return;
+      // hero (position:absolute, top:0 within the wrapper) renders starting at the
+      // same document position where the WRAPPER's own natural box begins post-pin —
+      // the wrapper's natural box is exactly section's height (hero contributes 0 to
+      // it). So hero only needs extra room for the amount by which it's TALLER than
+      // that natural box, not its full height.
+      // NOTE: use getBoundingClientRect(), not scrollHeight — the NetField canvas
+      // inside hero overflows hero's own box, which inflates scrollHeight to ~2x
+      // hero's true layout height. getBoundingClientRect() reflects hero's own
+      // CSS-computed box (it has overflow:clip), unaffected by that overflow.
+      const gap = heroEl.getBoundingClientRect().height - section.offsetHeight;
+      overflowSpacer.style.height = (gap > 0 ? gap : 0) + 'px';
+    }
+    syncHeroOverflowSpacer();
+    new ResizeObserver(syncHeroOverflowSpacer).observe(heroEl);
+    window.addEventListener('resize', syncHeroOverflowSpacer);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeroOverflowSpacer);
+
+    function buildScrollTrigger(){
+      if(noMotion){
+        // reduced motion: NO pin, hero stays in normal flow below the globe — just crossfade
+        // the crop out as the globe scrolls past; the hero is right there underneath.
+        ScrollTrigger.create({
+          trigger: section, start: 'top top', end: '+=100%', scrub: true,
+          onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); driveCopy(self.progress, false); },
+          onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
+        });
+      } else {
+        // pin the WRAPPER (not the globe section) so the spacer accounts for both together
+        ScrollTrigger.create({
+          trigger: wrapper,
+          start: 'top top',
+          end: isMobile ? '+=80%' : '+=120%',   // pin length / zoom duration
+          pin: wrapper,
+          scrub: SCRUB,           // scroll drives the animation directly, smoothed
+          onUpdate: self => {
+            const p = self.progress;
+            visible = true;       // keep the render loop alive throughout the pin
+            // drive the zoom toward the NYC hub
+            cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
+            driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
+            // dissolve in the final ~22% — globe stays visible/zooming longer, then a quick
+            // fade. The hero crossfades in BEHIND the globe (inverse opacity) so there's no
+            // black: globe 1→0 while hero 0→1, completing exactly at pin-release.
+            if(p > 0.78){
+              const d = (p - 0.78) / 0.22;
+              cropEl.style.opacity = String(1 - d);
+              if(heroEl) heroEl.style.opacity = String(d);     // crossfade hero in
+              if(!scatterFired){ scatterParticles(); scatterFired = true; }
+              // wait for the dissolve to fully finish, then hold for a beat so the
+              // entrance reads as its own moment rather than blending into the fade
+              if(p >= 0.999 && !dissolveDone){
+                dissolveDone = true;
+                heroEntranceTimer = setTimeout(() => {
+                  if(window.__triggerHeroEntrance) window.__triggerHeroEntrance();
+                }, 800);
+              }
+            } else {
+              cropEl.style.opacity = '1';
+              if(heroEl) heroEl.style.opacity = '0';           // hero hidden behind the opaque globe
+              if(scatterFired){ restoreParticles(); scatterFired = false; }   // scrubbed back up
+              if(dissolveDone){
+                dissolveDone = false;
+                if(heroEntranceTimer){ clearTimeout(heroEntranceTimer); heroEntranceTimer = null; }
+              }
+            }
+          },
+          onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
+        });
+      }
+    }
+
+    // CRITICAL for the fresh-open dissolve: build + measure AFTER full load, not at parse.
+    // The pin range depends on element heights that aren't final until fonts (Clash Display
+    // from Fontshare), globe.png, and the Three.js canvas have all painted — measuring too
+    // early gives a zero/near-zero pin range and the dissolve never fires on first scroll.
+    function initScrollTrigger(){
+      buildScrollTrigger();
+      ScrollTrigger.refresh();           // force re-measure once everything has painted
+    }
+    if(document.readyState === 'complete') initScrollTrigger();
+    else window.addEventListener('load', initScrollTrigger, { once:true });
+
+    // fonts can change element heights after first paint → re-measure when they're ready
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(() => ScrollTrigger.refresh());
+    }
+
+    // #globe-moment is height:100vh — if the viewport height resolves late (mobile URL bar,
+    // late layout), the first measured pin range is wrong. Re-measure when its height settles.
+    let lastSecH = 0;
+    new ResizeObserver(entries => {
+      const h = entries[0].contentRect.height;
+      if(Math.abs(h - lastSecH) > 2){ lastSecH = h; if(window.ScrollTrigger) ScrollTrigger.refresh(); }
+    }).observe(section);
+  } else if(window.__triggerHeroEntrance){
+    // GSAP unavailable — the hero was never pre-positioned/hidden above, so there's
+    // no dissolve to wait on. Reveal its entrance content immediately.
+    window.__triggerHeroEntrance();
   }
   // If GSAP fails to load, no pin is created — the section simply scrolls away
   // normally and #hero follows, so the page degrades gracefully (no error state).
