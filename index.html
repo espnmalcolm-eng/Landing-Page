@@ -257,7 +257,9 @@
   .intro{
     position:fixed;inset:0;z-index:100;background:var(--ink);
     display:flex;align-items:center;justify-content:center;pointer-events:none;
+    transition:opacity 0.7s cubic-bezier(0.22,1,0.36,1);
   }
+  .intro.dissolving{opacity:0}
   .intro.done{display:none}
   .intro-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
   .intro-ring{
@@ -1088,12 +1090,20 @@
         if(rings){ rings.style.transition = `opacity 0.55s ${EASE}`; rings.style.opacity = '0'; }
       }, 1200);
 
-      // Phase 4 — land: reveal the real nav brand, unmount the overlay
+      // Phase 4 — land: reveal the real nav brand, dissolve the overlay out
       setTimeout(()=>{
         navBrand.classList.remove('intro-pending');
         navBrand.style.transition = 'opacity 0.2s ease';
         navBrand.style.opacity    = '1';
-        introEl.classList.add('done');   // .intro.done → display:none
+        // fade the full-screen ink overlay to 0 — reveals the globe behind it
+        introEl.classList.add('dissolving');
+        // after the dissolve finishes, remove from layout entirely
+        setTimeout(()=>{
+          introEl.classList.add('done');
+          // signal the globe script to auto-play the globe→hero dissolve now
+          window.__introLanded = true;
+          window.dispatchEvent(new Event('intro-landed'));
+        }, 750);
       }, 2000);
     })();
 
@@ -1891,6 +1901,50 @@
       const h = entries[0].contentRect.height;
       if(Math.abs(h - lastSecH) > 2){ lastSecH = h; if(window.ScrollTrigger) ScrollTrigger.refresh(); }
     }).observe(section);
+
+    // ── Auto-play the dissolve once on load, right after the nav intro lands ──
+    // so the first-time visitor sees the cinematic globe→hero transition without
+    // having to scroll first. This animates the REAL scroll position through the
+    // pinned range (not a parallel/fake animation), so it drives the exact same
+    // onUpdate logic a manual scroll does — scrubbing back up afterward, or
+    // interrupting it mid-flight by scrolling/touching, behaves identically to
+    // the normal scroll-driven dissolve. Skipped for reduced-motion (no pin
+    // exists there) and for direct #hero deep links.
+    function autoPlayDissolve(){
+      if(noMotion || location.hash === '#hero') return;
+      const st = ScrollTrigger.getAll().find(t => t.trigger === wrapper || t.pin === wrapper);
+      if(!st || window.scrollY > 4) return;   // already scrolled — don't hijack
+      const endY = st.end;
+      if(endY <= 0) return;
+      const prevBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = 'auto';
+      const DUR = 3200;
+      let cancelled = false, rafId = null;
+      function stop(){
+        if(cancelled) return;
+        cancelled = true;
+        if(rafId) cancelAnimationFrame(rafId);
+        document.documentElement.style.scrollBehavior = prevBehavior;
+        ['wheel','touchstart','keydown'].forEach(evt => window.removeEventListener(evt, stop));
+      }
+      // hand control back the instant the user tries to scroll/interact themselves
+      ['wheel','touchstart','keydown'].forEach(evt => window.addEventListener(evt, stop, { passive:true, once:true }));
+      const t0 = performance.now();
+      function tick(now){
+        if(cancelled) return;
+        const t = Math.min((now - t0) / DUR, 1);
+        window.scrollTo(0, endY * EASE_OUT(t));
+        if(t < 1) rafId = requestAnimationFrame(tick);
+        else stop();
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    function readyForAutoPlay(){
+      if(document.readyState === 'complete') autoPlayDissolve();
+      else window.addEventListener('load', () => requestAnimationFrame(autoPlayDissolve), { once:true });
+    }
+    if(window.__introLanded) readyForAutoPlay();
+    else window.addEventListener('intro-landed', readyForAutoPlay, { once:true });
   } else if(window.__triggerHeroEntrance){
     // GSAP unavailable — the hero was never pre-positioned/hidden above, so there's
     // no dissolve to wait on. Reveal its entrance content immediately.
