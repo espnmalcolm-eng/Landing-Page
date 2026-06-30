@@ -401,9 +401,10 @@
 
   /* mobile-only scroll hint */
   .globe-scroll-hint{
-    display:none;position:absolute;left:50%;bottom:26px;z-index:10;
-    transform:translateX(-50%);color:var(--gold);pointer-events:none;
+    display:block;position:absolute;left:50%;bottom:26px;z-index:10;
+    transform:translateX(-50%);color:var(--gold);pointer-events:auto;cursor:pointer;
     font-size:22px;line-height:1;animation:gmBounce 1.8s var(--ease) infinite;
+    background:none;border:none;padding:8px;
   }
   @keyframes gmBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
   @media(max-width:767px){
@@ -590,7 +591,7 @@
       <span class="gm-cta-arrow">→</span>
     </a>
   </div>
-  <div class="globe-scroll-hint" aria-hidden="true">↓</div>
+  <button class="globe-scroll-hint" aria-label="Scroll to see more">↓</button>
 </section>
 
 <!-- 1 · HERO — StarField, headline + tagline, expand-form CTA -->
@@ -1902,18 +1903,15 @@
       if(Math.abs(h - lastSecH) > 2){ lastSecH = h; if(window.ScrollTrigger) ScrollTrigger.refresh(); }
     }).observe(section);
 
-    // ── Auto-play the dissolve once on load, right after the nav intro lands ──
-    // so the first-time visitor sees the cinematic globe→hero transition without
-    // having to scroll first. This animates the REAL scroll position through the
-    // pinned range (not a parallel/fake animation), so it drives the exact same
-    // onUpdate logic a manual scroll does — scrubbing back up afterward, or
-    // interrupting it mid-flight by scrolling/touching, behaves identically to
-    // the normal scroll-driven dissolve. Skipped for reduced-motion (no pin
-    // exists there) and for direct #hero deep links.
-    function autoPlayDissolve(){
-      if(noMotion || location.hash === '#hero') return;
+    // ── Arrow-triggered dissolve scroll ──
+    // The ↓ arrow at the bottom of the globe-moment animates the real scroll
+    // position through the pinned range so the existing dissolve logic drives
+    // everything identically to a manual scroll. User can interrupt at any point.
+    const scrollHint = section.querySelector('.globe-scroll-hint');
+    function triggerArrowScroll(){
+      if(noMotion){ window.scrollTo({ top: (heroEl ? heroEl.offsetTop : window.innerHeight), behavior:'smooth' }); return; }
       const st = ScrollTrigger.getAll().find(t => t.trigger === wrapper || t.pin === wrapper);
-      if(!st || window.scrollY > 4) return;   // already scrolled — don't hijack
+      if(!st) return;
       const endY = st.end;
       if(endY <= 0) return;
       const prevBehavior = document.documentElement.style.scrollBehavior;
@@ -1925,26 +1923,22 @@
         cancelled = true;
         if(rafId) cancelAnimationFrame(rafId);
         document.documentElement.style.scrollBehavior = prevBehavior;
-        ['wheel','touchstart','keydown'].forEach(evt => window.removeEventListener(evt, stop));
+        ['wheel','touchstart'].forEach(evt => window.removeEventListener(evt, stop));
       }
-      // hand control back the instant the user tries to scroll/interact themselves
-      ['wheel','touchstart','keydown'].forEach(evt => window.addEventListener(evt, stop, { passive:true, once:true }));
+      ['wheel','touchstart'].forEach(evt => window.addEventListener(evt, stop, { passive:true, once:true }));
+      const startY = window.scrollY;
+      const dist   = endY - startY;
       const t0 = performance.now();
       function tick(now){
         if(cancelled) return;
         const t = Math.min((now - t0) / DUR, 1);
-        window.scrollTo(0, endY * EASE_OUT(t));
+        window.scrollTo(0, startY + dist * EASE_OUT(t));
         if(t < 1) rafId = requestAnimationFrame(tick);
         else stop();
       }
       rafId = requestAnimationFrame(tick);
     }
-    function readyForAutoPlay(){
-      if(document.readyState === 'complete') autoPlayDissolve();
-      else window.addEventListener('load', () => requestAnimationFrame(autoPlayDissolve), { once:true });
-    }
-    if(window.__introLanded) readyForAutoPlay();
-    else window.addEventListener('intro-landed', readyForAutoPlay, { once:true });
+    if(scrollHint) scrollHint.addEventListener('click', triggerArrowScroll);
   } else if(window.__triggerHeroEntrance){
     // GSAP unavailable — the hero was never pre-positioned/hidden above, so there's
     // no dissolve to wait on. Reveal its entrance content immediately.
