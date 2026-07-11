@@ -185,6 +185,34 @@
   .close-line{color:var(--cream);font-size:1.1rem;margin-top:34px;max-width:54ch;font-weight:300}
   .close-line b{color:var(--gold);font-weight:600}
 
+  /* ---- spotlight rows (vendors + panel voices) ---- */
+  .spotlight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  .spot-card{
+    position:relative;display:block;aspect-ratio:1080/1350;border-radius:18px;overflow:hidden;
+    border:1px solid var(--gold-line);background:linear-gradient(155deg,#23190f,#0a0a0a 72%);
+    text-decoration:none;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
+  }
+  .spot-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 14px 40px -20px rgba(201,168,76,.6)}
+  .spot-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:1}
+  .spot-card .fallback{
+    position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:10px;padding:24px;
+  }
+  .spot-card .fallback .f-name{font-family:var(--display);font-weight:600;font-size:1.4rem;color:var(--cream);line-height:1.1}
+  .spot-card .fallback .f-type{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .spot-card .cta{
+    position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px 18px;
+    background:linear-gradient(0deg,rgba(10,10,10,.94),rgba(10,10,10,.55) 60%,transparent);
+    color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    transform:translateY(101%);transition:transform .3s var(--ease);
+  }
+  .spot-card:hover .cta{transform:translateY(0)}
+  .spot-card .cta .who{color:var(--cream)}
+  .spot-card.empty{cursor:default;background:var(--ink-2);border-style:dashed}
+  .spot-card.empty:hover{transform:none;border-color:var(--gold-line);box-shadow:none}
+  .spot-card.empty .fallback .f-name{opacity:.5}
+
   /* ---- venue ---- */
   .venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start;margin-top:50px}
   .venue-partners{font-family:var(--display);font-weight:600;font-size:clamp(1.4rem,2.6vw,2rem);color:var(--cream);margin-top:18px}
@@ -256,6 +284,15 @@
     .cards{grid-template-columns:1fr}
     .venue-grid{grid-template-columns:1fr;gap:34px}
     .cd-secs{display:none}
+    .spotlight-row{
+      grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:76%;
+      overflow-x:auto;overflow-y:clip;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:12px;
+    }
+    .spotlight-row::-webkit-scrollbar{display:none}
+    .spotlight-row>*{scroll-snap-align:start}
+    .spot-card .cta{transform:translateY(0);justify-content:flex-start;letter-spacing:.08em}
+    .spot-card .cta .who{display:none}
   }
   @media(max-width:560px){
     .bingo .cell{padding:12px;font-size:11px;min-height:88px}
@@ -344,7 +381,7 @@
       <div class="card reveal d3">
         <div class="num">03</div>
         <h3>Vendor Tables</h3>
-        <p>Three curated Black-owned brands. Their racks and tables live inside KickingIt ATX. Shop, discover, and support while you network.</p>
+        <p>Three curated Black-owned brands — <a href="#vendors" style="color:var(--gold);text-decoration:none">By Donavan-Amir, Slo Burn &amp; Sideshow</a>. Their racks, tables, and pours live inside KickingIt ATX. Shop, discover, and support while you network.</p>
       </div>
     </div>
 
@@ -366,7 +403,33 @@
   </div>
 </section>
 
-<!-- 03 — THE GAME / PANEL -->
+<!-- 03 — THE VENDORS -->
+<section class="block" id="vendors">
+  <div class="wrap">
+    <span class="eyebrow reveal">03 — The vendors</span>
+    <h2 class="lead-head reveal">Three Black-owned brands, <span class="gold">in the building.</span></h2>
+    <p class="body-copy reveal d1">Racks, tables, and pours live inside KickingIt ATX all afternoon. Shop the culture while you connect with it — and meet the people behind the brands.</p>
+    <div class="spotlight-row">
+      <a class="spot-card reveal d1" href="https://instagram.com/bydonavanamir" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="by-donavan-amir">
+        <div class="fallback"><span class="f-name">By Donavan-Amir</span><span class="f-type">Clothing</span></div>
+        <img src="assets/vendors/by-donavan-amir.jpg" alt="By Donavan-Amir — Austin-based luxury streetwear" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">By Donavan-Amir</span><span>@bydonavanamir →</span></div>
+      </a>
+      <a class="spot-card reveal d2" href="https://instagram.com/sloburn.atx" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="slo-burn">
+        <div class="fallback"><span class="f-name">Slo Burn</span><span class="f-type">Beverage</span></div>
+        <img src="assets/vendors/slo-burn.jpg" alt="Slo Burn — Austin matcha and cold brew pop-up" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">Slo Burn</span><span>@sloburn.atx →</span></div>
+      </a>
+      <a class="spot-card reveal d3" href="https://instagram.com/sideshow.us" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="sideshow">
+        <div class="fallback"><span class="f-name">Sideshow</span><span class="f-type">Clothing</span></div>
+        <img src="assets/vendors/sideshow.jpg" alt="Sideshow — private label clothing" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">Sideshow</span><span>@sideshow.us →</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 04 — THE GAME / PANEL -->
 <section class="block">
   <canvas class="net-field" data-density="350"></canvas>
   <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
@@ -376,9 +439,25 @@
     <path pathLength="1" d="M100,10 L0,80"/>
   </svg>
   <div class="wrap">
-    <span class="eyebrow reveal">03 — The panel</span>
+    <span class="eyebrow reveal">04 — The panel</span>
     <h2 class="lead-head reveal">The mixer is the warmup.<br><span class="gold">The panel is where the real education begins.</span></h2>
     <p class="body-copy reveal d1">Immediately following close out, Culture Connects: ATX transitions into an exclusive fashion industry panel — a raw, unfiltered conversation with real professionals who have built careers, brands, and businesses at the intersection of fashion, culture, and entrepreneurship.</p>
+
+    <span class="eyebrow reveal" style="margin-top:46px;display:inline-flex">Voices on the panel</span>
+    <div class="spotlight-row">
+      <a class="spot-card reveal d1" href="https://instagram.com/bydonavanamir" target="_blank" rel="noopener" data-track="panelist_click" data-panelist="dallas-hunt">
+        <div class="fallback"><span class="f-name">Dallas Hunt</span><span class="f-type">Creative Director · By Donavan-Amir</span></div>
+        <img src="assets/vendors/dallas-hunt.jpg" alt="Dallas Hunt — Creative Director and Designer of By Donavan-Amir" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">Dallas Hunt</span><span>Panelist →</span></div>
+      </a>
+      <div class="spot-card empty reveal d2" aria-hidden="true">
+        <div class="fallback"><span class="f-name">Panelist</span><span class="f-type">Announced soon</span></div>
+      </div>
+      <div class="spot-card empty reveal d3" aria-hidden="true">
+        <div class="fallback"><span class="f-name">Panelist</span><span class="f-type">Announced soon</span></div>
+      </div>
+    </div>
+
     <ul class="topics">
       <li class="reveal d1">How to break into fashion as an independent creative</li>
       <li class="reveal d2">Building and monetizing your personal brand</li>
@@ -499,6 +578,12 @@
     const el = document.getElementById(id);
     if(el) el.addEventListener('click', () => window.trackEvent('event_rsvp', { source: 'culture_connects_atx', via: id === 'hero-cta' ? 'hero' : 'finale' }));
   });
+
+  // ---- track vendor + panelist spotlight clicks ----
+  document.querySelectorAll('[data-track="vendor_click"]').forEach(el =>
+    el.addEventListener('click', () => window.trackEvent('vendor_click', { source: 'culture_connects_atx', vendor: el.dataset.vendor })));
+  document.querySelectorAll('[data-track="panelist_click"]').forEach(el =>
+    el.addEventListener('click', () => window.trackEvent('panelist_click', { source: 'culture_connects_atx', panelist: el.dataset.panelist })));
 </script>
 
 <!-- ===== StarField (NetField) + LineField + reveal ===== -->
