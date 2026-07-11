@@ -185,6 +185,79 @@
   .close-line{color:var(--cream);font-size:1.1rem;margin-top:34px;max-width:54ch;font-weight:300}
   .close-line b{color:var(--gold);font-weight:600}
 
+  /* ---- spotlight rows (vendors + panel voices) ---- */
+  .spotlight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  .spot-card{
+    position:relative;display:block;aspect-ratio:1080/1350;border-radius:18px;overflow:hidden;
+    border:1px solid var(--gold-line);background:linear-gradient(155deg,#23190f,#0a0a0a 72%);
+    text-decoration:none;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
+  }
+  .spot-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 14px 40px -20px rgba(201,168,76,.6)}
+  .spot-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:1}
+  .spot-card .fallback{
+    position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:10px;padding:24px;
+  }
+  .spot-card .fallback .f-name{font-family:var(--display);font-weight:600;font-size:1.4rem;color:var(--cream);line-height:1.1}
+  .spot-card .fallback .f-type{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .spot-card .cta{
+    position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px 18px;
+    background:linear-gradient(0deg,rgba(10,10,10,.94),rgba(10,10,10,.55) 60%,transparent);
+    color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    transform:translateY(101%);transition:transform .3s var(--ease);
+  }
+  .spot-card:hover .cta{transform:translateY(0)}
+  .spot-card .cta .who{color:var(--cream)}
+  .spot-card.empty{cursor:default;background:var(--ink-2);border-style:dashed}
+  .spot-card.empty:hover{transform:none;border-color:var(--gold-line);box-shadow:none}
+  .spot-card.empty .fallback .f-name{opacity:.5}
+
+  /* ---- panelist deck (interactive fanned spread) ---- */
+  .panel-stage{padding-top:clamp(70px,10vh,120px)}
+  .panel-stage .lead-head{font-size:clamp(2rem,4.6vw,3.4rem)}
+  .deck{position:relative;height:clamp(400px,52vw,520px);margin:54px auto 0;max-width:760px;perspective:1400px}
+  .p-card{
+    position:absolute;top:50%;left:50%;width:clamp(196px,26vw,272px);aspect-ratio:1080/1350;
+    margin:0;padding:0;border:1px solid var(--gold-line);border-radius:20px;overflow:hidden;cursor:pointer;
+    background:linear-gradient(155deg,#23190f,#0a0a0a 72%);transform-origin:center bottom;
+    transition:transform .55s var(--ease),box-shadow .45s var(--ease),border-color .45s,opacity .45s,filter .45s;
+    will-change:transform;-webkit-tap-highlight-color:transparent;
+  }
+  /* static fan fallback (no-JS / pre-hydration) */
+  .p-card:nth-child(1){transform:translate(-50%,-50%) translateX(-46%) rotate(-8deg) scale(.86);opacity:.55;z-index:1}
+  .p-card:nth-child(2){transform:translate(-50%,-50%) translateY(-12px) scale(1.05);z-index:3}
+  .p-card:nth-child(3){transform:translate(-50%,-50%) translateX(46%) rotate(8deg) scale(.86);opacity:.55;z-index:2}
+  .p-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:1}
+  .p-card .p-fallback{
+    position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:9px;padding:22px;
+  }
+  .p-card .p-fallback .pf-name{font-family:var(--display);font-weight:600;font-size:1.2rem;color:var(--cream);line-height:1.1}
+  .p-card .p-fallback .pf-role{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;line-height:1.4}
+  .p-card::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(0deg,rgba(10,10,10,.45),transparent 42%);opacity:.9;transition:opacity .45s}
+  .p-card.is-active{border-color:var(--gold);box-shadow:0 26px 60px -22px rgba(201,168,76,.75),0 0 0 1px var(--gold);opacity:1;filter:none}
+  .p-card.is-active::after{opacity:.25}
+  .p-card:not(.is-active){filter:saturate(.82) brightness(.86)}
+
+  .p-caption{
+    max-width:52ch;margin:40px auto 0;text-align:center;
+    transition:opacity .28s var(--ease),transform .28s var(--ease);
+  }
+  .p-caption.swapping{opacity:0;transform:translateY(8px)}
+  .pc-badge{
+    display:inline-block;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:700;
+    border:1px solid var(--gold-line);border-radius:999px;padding:5px 13px;background:var(--gold-soft);margin-bottom:16px;
+  }
+  .pc-badge[hidden]{display:none}
+  .pc-name{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3.4vw,2.3rem);color:var(--cream);line-height:1.05}
+  .pc-role{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-top:10px}
+  .pc-bio{color:var(--cream-dim);font-size:1.02rem;font-weight:300;margin-top:16px}
+  .pc-link{display:inline-block;margin-top:16px;color:var(--gold);text-decoration:none;font-weight:600;font-size:13px;letter-spacing:.04em}
+  .pc-link:hover{text-decoration:underline}
+  .pc-link[hidden]{display:none}
+  .deck-hint{text-align:center;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-faint);font-weight:600;margin-top:26px}
+
   /* ---- venue ---- */
   .venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start;margin-top:50px}
   .venue-partners{font-family:var(--display);font-weight:600;font-size:clamp(1.4rem,2.6vw,2rem);color:var(--cream);margin-top:18px}
@@ -256,6 +329,15 @@
     .cards{grid-template-columns:1fr}
     .venue-grid{grid-template-columns:1fr;gap:34px}
     .cd-secs{display:none}
+    .spotlight-row{
+      grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:76%;
+      overflow-x:auto;overflow-y:clip;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:12px;
+    }
+    .spotlight-row::-webkit-scrollbar{display:none}
+    .spotlight-row>*{scroll-snap-align:start}
+    .spot-card .cta{transform:translateY(0);justify-content:flex-start;letter-spacing:.08em}
+    .spot-card .cta .who{display:none}
   }
   @media(max-width:560px){
     .bingo .cell{padding:12px;font-size:11px;min-height:88px}
@@ -313,6 +395,47 @@
   </div>
 </section>
 
+<!-- PANELISTS — interactive deck (carries the hero starfield) -->
+<section class="block panel-stage" id="panelists">
+  <canvas class="net-field" data-density="500"></canvas>
+  <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <path pathLength="1" d="M8,0 L32,100"/>
+    <path pathLength="1" d="M48,0 L72,100"/>
+    <path pathLength="1" d="M84,0 L96,100"/>
+    <path pathLength="1" d="M0,38 L100,72"/>
+    <path pathLength="1" d="M100,18 L0,66"/>
+  </svg>
+  <div class="wrap">
+    <span class="eyebrow reveal" style="justify-content:center;width:100%">The panelists</span>
+    <h2 class="lead-head reveal" style="text-align:center;max-width:none;margin-left:auto;margin-right:auto">The voices <span class="gold">behind the culture.</span></h2>
+    <p class="body-copy reveal d1" style="text-align:center;margin-left:auto;margin-right:auto">Three creatives who've built brands where fashion, culture, and business meet. Tap a card to meet them.</p>
+
+    <div class="deck reveal d2" id="panel-deck" role="tablist" aria-label="Panelists">
+      <button class="p-card" role="tab" aria-selected="false" data-i="0">
+        <div class="p-fallback"><span class="pf-name">Dallas Hunt</span><span class="pf-role">Creative Director · By Donavan-Amir</span></div>
+        <img src="assets/panelists/dallas-hunt.jpg" alt="Dallas Hunt — Creative Director and Designer of By Donavan-Amir" loading="lazy" onerror="this.style.display='none'">
+      </button>
+      <button class="p-card" role="tab" aria-selected="true" data-i="1">
+        <div class="p-fallback"><span class="pf-name">Greg Peace II</span><span class="pf-role">Owner &amp; Head Designer · Designed by Peace</span></div>
+        <img src="assets/panelists/greg-peace.jpg" alt="Greg Peace II — Owner and Head Designer of Designed by Peace" loading="lazy" onerror="this.style.display='none'">
+      </button>
+      <button class="p-card" role="tab" aria-selected="false" data-i="2">
+        <div class="p-fallback"><span class="pf-name">Raven Anderson</span><span class="pf-role">Social Media Director · Kicking It</span></div>
+        <img src="assets/panelists/raven-anderson.jpg" alt="Raven Anderson — Social Media Director for Kicking It" loading="lazy" onerror="this.style.display='none'">
+      </button>
+    </div>
+
+    <div class="p-caption reveal d2" id="p-caption" aria-live="polite">
+      <span class="pc-badge" hidden>Special guest</span>
+      <h3 class="pc-name">Greg Peace II</h3>
+      <div class="pc-role">Owner &amp; Head Designer · Designed by Peace</div>
+      <p class="pc-bio">Founder and head designer of Designed by Peace — building a brand around a personal ethos of peace and intention.</p>
+      <a class="pc-link" target="_blank" rel="noopener" hidden></a>
+    </div>
+    <p class="deck-hint reveal" aria-hidden="true">← Tap a card to switch →</p>
+  </div>
+</section>
+
 <!-- 01 — THE VIBE -->
 <section class="block">
   <div class="wrap">
@@ -344,7 +467,7 @@
       <div class="card reveal d3">
         <div class="num">03</div>
         <h3>Vendor Tables</h3>
-        <p>Three curated Black-owned brands. Their racks and tables live inside KickingIt ATX. Shop, discover, and support while you network.</p>
+        <p>Three curated Black-owned brands — <a href="#vendors" style="color:var(--gold);text-decoration:none">By Donavan-Amir, Slo Burn &amp; Sideshow</a>. Their racks, tables, and pours live inside KickingIt ATX. Shop, discover, and support while you network.</p>
       </div>
     </div>
 
@@ -366,7 +489,33 @@
   </div>
 </section>
 
-<!-- 03 — THE GAME / PANEL -->
+<!-- 03 — THE VENDORS -->
+<section class="block" id="vendors">
+  <div class="wrap">
+    <span class="eyebrow reveal">03 — The vendors</span>
+    <h2 class="lead-head reveal">Three Black-owned brands, <span class="gold">in the building.</span></h2>
+    <p class="body-copy reveal d1">Racks, tables, and pours live inside KickingIt ATX all afternoon. Shop the culture while you connect with it — and meet the people behind the brands.</p>
+    <div class="spotlight-row">
+      <a class="spot-card reveal d1" href="https://instagram.com/bydonavanamir" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="by-donavan-amir">
+        <div class="fallback"><span class="f-name">By Donavan-Amir</span><span class="f-type">Clothing</span></div>
+        <img src="assets/vendors/by-donavan-amir.jpg" alt="By Donavan-Amir — Austin-based luxury streetwear" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">By Donavan-Amir</span><span>@bydonavanamir →</span></div>
+      </a>
+      <a class="spot-card reveal d2" href="https://instagram.com/sloburn.atx" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="slo-burn">
+        <div class="fallback"><span class="f-name">Slo Burn</span><span class="f-type">Beverage</span></div>
+        <img src="assets/vendors/slo-burn.jpg" alt="Slo Burn — Austin matcha and cold brew pop-up" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">Slo Burn</span><span>@sloburn.atx →</span></div>
+      </a>
+      <a class="spot-card reveal d3" href="https://instagram.com/sideshow.us" target="_blank" rel="noopener" data-track="vendor_click" data-vendor="sideshow">
+        <div class="fallback"><span class="f-name">Sideshow</span><span class="f-type">Clothing</span></div>
+        <img src="assets/vendors/sideshow.jpg" alt="Sideshow — private label clothing" loading="lazy" onerror="this.style.display='none'">
+        <div class="cta"><span class="who">Sideshow</span><span>@sideshow.us →</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 04 — THE GAME / PANEL -->
 <section class="block">
   <canvas class="net-field" data-density="350"></canvas>
   <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
@@ -376,9 +525,9 @@
     <path pathLength="1" d="M100,10 L0,80"/>
   </svg>
   <div class="wrap">
-    <span class="eyebrow reveal">03 — The panel</span>
+    <span class="eyebrow reveal">04 — The panel</span>
     <h2 class="lead-head reveal">The mixer is the warmup.<br><span class="gold">The panel is where the real education begins.</span></h2>
-    <p class="body-copy reveal d1">Immediately following close out, Culture Connects: ATX transitions into an exclusive fashion industry panel — a raw, unfiltered conversation with real professionals who have built careers, brands, and businesses at the intersection of fashion, culture, and entrepreneurship.</p>
+    <p class="body-copy reveal d1">Immediately following close out, Culture Connects: ATX transitions into an exclusive fashion industry panel — a raw, unfiltered conversation with our <a href="#panelists" style="color:var(--gold);text-decoration:none">three panelists</a>: real professionals who have built careers, brands, and businesses at the intersection of fashion, culture, and entrepreneurship.</p>
     <ul class="topics">
       <li class="reveal d1">How to break into fashion as an independent creative</li>
       <li class="reveal d2">Building and monetizing your personal brand</li>
@@ -499,6 +648,94 @@
     const el = document.getElementById(id);
     if(el) el.addEventListener('click', () => window.trackEvent('event_rsvp', { source: 'culture_connects_atx', via: id === 'hero-cta' ? 'hero' : 'finale' }));
   });
+
+  // ---- track vendor spotlight clicks ----
+  document.querySelectorAll('[data-track="vendor_click"]').forEach(el =>
+    el.addEventListener('click', () => window.trackEvent('vendor_click', { source: 'culture_connects_atx', vendor: el.dataset.vendor })));
+</script>
+
+<!-- ===== Panelist deck (fanned spread, pick to bring forward) ===== -->
+<script>
+(function(){
+  const deck = document.getElementById('panel-deck');
+  const cap  = document.getElementById('p-caption');
+  if(!deck || !cap) return;
+  const cards = Array.prototype.slice.call(deck.querySelectorAll('.p-card'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const DATA = [
+    { name:'Dallas Hunt',   role:'Creative Director & Designer · By Donavan-Amir', badge:'',
+      bio:'The design mind behind By Donavan-Amir — Austin luxury streetwear built on storytelling, faith, and lived experience.',
+      ig:'https://instagram.com/bydonavanamir', igLabel:'@bydonavanamir →' },
+    { name:'Greg Peace II', role:'Owner & Head Designer · Designed by Peace', badge:'Special guest',
+      bio:'Founder and head designer of Designed by Peace — building a brand around a personal ethos of peace and intention.',
+      ig:'', igLabel:'' },
+    { name:'Raven Anderson', role:'Social Media Director · Kicking It', badge:'',
+      bio:"The voice behind Kicking It's channels — shaping how Austin's sneaker and fashion culture shows up online.",
+      ig:'', igLabel:'' }
+  ];
+
+  let active = 1, spread = 168, rot = 8;
+
+  function metrics(){
+    const w = window.innerWidth;
+    spread = w < 620 ? 92 : (w < 900 ? 130 : 168);
+    rot = w < 620 ? 7 : 8;
+  }
+  function layout(){
+    cards.forEach(function(c,i){
+      const off = i - active;
+      if(off === 0){
+        c.style.transform = 'translate(-50%,-50%) translateY(-14px) scale(1.06) rotate(0deg)';
+        c.style.zIndex = '30'; c.style.opacity = '1';
+        c.classList.add('is-active'); c.setAttribute('aria-selected','true'); c.tabIndex = 0;
+      } else {
+        const dir = off < 0 ? -1 : 1, mag = Math.abs(off);
+        const x = dir * (spread + (mag-1)*66);
+        const r = dir * (rot + (mag-1)*5);
+        const s = Math.max(0.72, 0.86 - (mag-1)*0.08);
+        c.style.transform = 'translate(-50%,-50%) translateX('+x+'px) rotate('+r+'deg) scale('+s+')';
+        c.style.zIndex = String(20 - mag);
+        c.style.opacity = String(Math.max(0.4, 0.58 - (mag-1)*0.16));
+        c.classList.remove('is-active'); c.setAttribute('aria-selected','false'); c.tabIndex = -1;
+      }
+    });
+  }
+  function renderCaption(){
+    const d = DATA[active];
+    function apply(){
+      const badge = cap.querySelector('.pc-badge');
+      badge.textContent = d.badge || ''; badge.hidden = !d.badge;
+      cap.querySelector('.pc-name').textContent = d.name;
+      cap.querySelector('.pc-role').textContent = d.role;
+      cap.querySelector('.pc-bio').textContent = d.bio;
+      const link = cap.querySelector('.pc-link');
+      if(link){
+        if(d.ig){ link.href = d.ig; link.textContent = d.igLabel; link.hidden = false; }
+        else { link.hidden = true; link.removeAttribute('href'); }
+      }
+    }
+    if(reduce){ apply(); return; }
+    cap.classList.add('swapping');
+    setTimeout(function(){ apply(); cap.classList.remove('swapping'); }, 170);
+  }
+  function select(i){
+    if(i === active) return;
+    active = i; layout(); renderCaption();
+    window.trackEvent && window.trackEvent('panelist_select', { source:'culture_connects_atx', panelist: DATA[i].name });
+  }
+
+  cards.forEach(function(c,i){
+    c.addEventListener('click', function(){ select(i); });
+    c.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowRight'){ e.preventDefault(); const n = Math.min(cards.length-1, active+1); select(n); cards[n].focus(); }
+      else if(e.key === 'ArrowLeft'){ e.preventDefault(); const n = Math.max(0, active-1); select(n); cards[n].focus(); }
+    });
+  });
+
+  metrics(); layout(); renderCaption();
+  let rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ metrics(); layout(); }, 120); });
+})();
 </script>
 
 <!-- ===== StarField (NetField) + LineField + reveal ===== -->
