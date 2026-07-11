@@ -14,10 +14,4 @@ so nothing gets cropped.
 | `slo-burn.jpg` | Slo Burn | Beverage | instagram.com/sloburn.atx |
 | `sideshow.jpg` | Sideshow | Clothing | instagram.com/sideshow.us |
 
-## Panel — "04 — The panel" → Voices on the panel
-| File | Panelist | Role |
-|---|---|---|
-| `dallas-hunt.jpg` | Dallas Hunt | Creative Director · By Donavan-Amir |
-
-Two more panelist slots render as "Announced soon" placeholders — add their
-cards in `culture-connects.html` once names/handles/photos are confirmed.
+Panelist images now live in `assets/panelists/` (see that folder's README).
