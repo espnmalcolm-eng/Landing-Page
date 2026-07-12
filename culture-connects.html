@@ -138,52 +138,6 @@
   .body-copy{color:var(--cream-dim);font-size:1.05rem;font-weight:300;margin-top:22px;max-width:60ch}
   .body-copy strong{color:var(--cream);font-weight:600}
   .body-copy + .body-copy{margin-top:16px}
-  .pullquote{
-    font-family:var(--display);font-weight:500;font-size:clamp(1.5rem,2.6vw,2.05rem);line-height:1.18;
-    color:var(--cream);border-left:2px solid var(--gold);padding-left:26px;margin-top:44px;max-width:24ch;
-    letter-spacing:-.01em;font-style:italic;
-  }
-  .pullquote em{color:var(--gold)}
-
-  /* ---- cards (inside the room) ---- */
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
-  .card{
-    border:1px solid var(--gold-line);border-radius:20px;padding:34px 30px;background:var(--ink-2);
-    position:relative;transition:.3s;overflow:hidden;
-  }
-  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,rgba(201,168,76,.10),transparent 60%);opacity:0;transition:.3s}
-  .card:hover{transform:translateY(-6px);border-color:var(--gold)}
-  .card:hover::before{opacity:1}
-  .card .num{font-family:var(--display);font-size:13px;letter-spacing:.3em;color:var(--gold);opacity:.8}
-  .card h3{font-size:1.45rem;margin:16px 0 10px;color:var(--cream)}
-  .card p{font-size:.96rem;color:var(--cream-dim);font-weight:300}
-
-  /* ---- networking bingo ---- */
-  .bingo-wrap{margin-top:60px;max-width:640px}
-  .bingo{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:22px;
-    border:1px solid var(--gold-line);border-radius:18px;overflow:hidden;
-  }
-  .bingo .cell{
-    border:1px solid rgba(201,168,76,.15);padding:20px;font-size:13px;color:var(--cream);
-    min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;
-    line-height:1.4;font-weight:400;transition:background .25s;
-  }
-  .bingo .cell:hover{background:var(--gold-soft)}
-  .bingo .cell.free{
-    background:rgba(201,168,76,.15);color:var(--gold);font-family:var(--display);font-weight:500;font-size:14px;
-  }
-  .bingo .cell.free:hover{background:rgba(201,168,76,.22)}
-
-  /* ---- topics (the panel) ---- */
-  .topics{list-style:none;margin-top:40px;max-width:60ch}
-  .topics li{
-    color:var(--cream-dim);font-size:1.08rem;font-weight:300;padding:16px 0;border-bottom:1px solid rgba(201,168,76,.12);
-    display:flex;gap:16px;align-items:baseline;
-  }
-  .topics li::before{content:"—";color:var(--gold);font-weight:600;flex-shrink:0}
-  .close-line{color:var(--cream);font-size:1.1rem;margin-top:34px;max-width:54ch;font-weight:300}
-  .close-line b{color:var(--gold);font-weight:600}
 
   /* ---- fanned deck (interactive spread — panelists + vendors) ---- */
   .panel-stage{padding-top:clamp(70px,10vh,120px)}
@@ -298,13 +252,10 @@
 
   /* ---- responsive ---- */
   @media(max-width:860px){
-    .cards{grid-template-columns:1fr}
     .venue-grid{grid-template-columns:1fr;gap:34px}
     .cd-secs{display:none}
   }
   @media(max-width:560px){
-    .bingo .cell{padding:12px;font-size:11px;min-height:88px}
-    .bingo .cell.free{font-size:12px}
     .form input{min-width:100%}
     .countdown{gap:10px}
     .cd-box{min-width:70px;padding:12px 10px}
@@ -315,7 +266,6 @@
     .line-field path{stroke-dashoffset:0;stroke-opacity:.13;transition:none}
     .chip .dot{animation:none}
     .btn:hover{transform:none}
-    .card:hover{transform:none}
   }
 </style>
 </head>
@@ -399,63 +349,10 @@
   </div>
 </section>
 
-<!-- 01 — THE VIBE -->
-<section class="block">
-  <div class="wrap">
-    <span class="eyebrow reveal">01 — What this is</span>
-    <h2 class="lead-head reveal">No stiff handshakes. No name tag lanyards. No boring panels. Just the culture doing what it does.</h2>
-    <p class="body-copy reveal d1">100 of Austin's most expressive, ambitious, and culture-forward professionals in one room — dressed how they want, connecting how they want, building relationships that actually last.</p>
-    <p class="body-copy reveal d2">If you sit at the intersection of <strong>fashion, business, and Black &amp; Brown excellence</strong> — this room was built for you.</p>
-    <p class="body-copy reveal d3">Vol. 2 of a series coming to Houston, Dallas, and beyond. Get in while it's intimate.</p>
-    <p class="pullquote reveal d2">In two years, you'll be telling people you were there from <em>the jump.</em></p>
-  </div>
-</section>
-
-<!-- 02 — INSIDE THE ROOM -->
-<section class="block">
-  <div class="wrap">
-    <span class="eyebrow reveal">02 — What's happening</span>
-    <h2 class="lead-head reveal">Three ways to <span class="gold">show up.</span></h2>
-    <div class="cards">
-      <div class="card reveal d1">
-        <div class="num">01</div>
-        <h3>Networking Bingo</h3>
-        <p>Nine squares. Nine real challenges designed to get you off your phone and into the room. Find someone who designs their own clothes. Give a genuine compliment on a fit. Connect with a content creator. Exchange info with a photographer. Complete your card and you might walk away with a swag bag. Two rounds. Two winners. All community.</p>
-      </div>
-      <div class="card reveal d2">
-        <div class="num">02</div>
-        <h3>Fit Checks &amp; Sneaker Cam</h3>
-        <p>Your outfit is your opener. Host Kee works the room from jump — live fit checks, capturing standout looks, putting the best fits and freshest kicks on camera in real time. Midway through, standout guests get pulled for quick-fire interviews: your style origin, your brand, your creative journey. The footage goes straight to social.</p>
-      </div>
-      <div class="card reveal d3">
-        <div class="num">03</div>
-        <h3>Vendor Tables</h3>
-        <p>Three curated Black-owned brands — <a href="#vendors" style="color:var(--gold);text-decoration:none">By Donavan-Amir, Slo Burn &amp; Sideshow</a>. Their racks, tables, and pours live inside KickingIt ATX. Shop, discover, and support while you network.</p>
-      </div>
-    </div>
-
-    <!-- Networking Bingo card visual -->
-    <div class="bingo-wrap reveal">
-      <span class="eyebrow">Your networking bingo card</span>
-      <div class="bingo" aria-hidden="true">
-        <div class="cell">Find someone who designs their own clothes</div>
-        <div class="cell">Give a genuine compliment on someone's fit</div>
-        <div class="cell">Connect with a content creator</div>
-        <div class="cell">Exchange info with a photographer</div>
-        <div class="cell free">Find someone who's been to a fashion week</div>
-        <div class="cell">Meet someone from a city you've never been to</div>
-        <div class="cell">Find a Black-owned brand you didn't know about</div>
-        <div class="cell">Connect with someone who works in music</div>
-        <div class="cell">Find someone whose hustle inspires you</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 03 — THE VENDORS -->
+<!-- THE VENDORS -->
 <section class="block" id="vendors">
   <div class="wrap">
-    <span class="eyebrow reveal">03 — The vendors</span>
+    <span class="eyebrow reveal">The vendors</span>
     <h2 class="lead-head reveal">Three Black-owned brands, <span class="gold">in the building.</span></h2>
     <p class="body-copy reveal d1">Racks, tables, and pours live inside KickingIt ATX all afternoon. Shop the culture while you connect with it — and meet the people behind the brands.</p>
     <div class="deck reveal d2" id="vendor-deck" role="tablist" aria-label="Vendors">
@@ -484,31 +381,16 @@
   </div>
 </section>
 
-<!-- 04 — THE GAME / PANEL -->
+<!-- WHAT THIS IS -->
 <section class="block">
-  <canvas class="net-field" data-density="350"></canvas>
-  <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
-    <path pathLength="1" d="M10,0 L35,100"/>
-    <path pathLength="1" d="M55,0 L80,100"/>
-    <path pathLength="1" d="M0,25 L100,60"/>
-    <path pathLength="1" d="M100,10 L0,80"/>
-  </svg>
   <div class="wrap">
-    <span class="eyebrow reveal">04 — The panel</span>
-    <h2 class="lead-head reveal">The mixer is the warmup.<br><span class="gold">The panel is where the real education begins.</span></h2>
-    <p class="body-copy reveal d1">Immediately following close out, Culture Connects: ATX transitions into an exclusive fashion industry panel — a raw, unfiltered conversation with our <a href="#panelists" style="color:var(--gold);text-decoration:none">three panelists</a>: real professionals who have built careers, brands, and businesses at the intersection of fashion, culture, and entrepreneurship.</p>
-    <ul class="topics">
-      <li class="reveal d1">How to break into fashion as an independent creative</li>
-      <li class="reveal d2">Building and monetizing your personal brand</li>
-      <li class="reveal d3">The business side: from production to distribution</li>
-      <li class="reveal d4">Navigating the industry as a Black &amp; Brown entrepreneur</li>
-      <li class="reveal d5">Turning your passion for style into a sustainable career</li>
-    </ul>
-    <p class="close-line reveal">Come with questions. Leave with <b>answers, connections, and a clear next step</b> for your creative journey.</p>
+    <span class="eyebrow reveal">What this is</span>
+    <h2 class="lead-head reveal">Just the culture <span class="gold">doing what it does.</span></h2>
+    <p class="body-copy reveal d1">If you sit at the intersection of <strong>fashion, business, and Black &amp; Brown excellence</strong> — this room was built for you.</p>
   </div>
 </section>
 
-<!-- 04 — THE VENUE -->
+<!-- THE VENUE -->
 <section class="block">
   <div class="wrap">
     <span class="eyebrow reveal">Hosted inside</span>
