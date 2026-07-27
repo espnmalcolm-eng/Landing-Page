@@ -1004,18 +1004,20 @@
     { name:"Don Narcisse Jr.", role:"Founding member", thumb:"advocates/don-narcisse-jr.jpg",        src:"advocates/don-narcisse-jr.mp4" },
     { name:"Everett Johnson",  role:"Founding member", thumb:"advocates/everett-johnson.jpg",        src:"advocates/everett-johnson.mp4" },
     { name:"Tyson Lowe",       role:"Founding member", thumb:"advocates/tyson-lowe.jpg",             src:"advocates/tyson-lowe.mp4" },
-    { name:"Ashylnn Savannah", role:"Founding member", thumb:"", src:"" },  /* TODO: add advocates/ashylnn-savannah.jpg + .mp4 from Instagram */
-    { name:"Jamail Mathews",   role:"Founding member", thumb:"", src:"" },  /* TODO: add advocates/jamail-mathews.jpg + .mp4 from Instagram */
-    { name:"Anissa",           role:"Founding member", thumb:"", src:"" },  /* TODO: add advocates/anissa.jpg + .mp4 from Instagram */
-    { name:"Chiselwa",         role:"Founding member", thumb:"", src:"" },  /* TODO: add advocates/chiselwa.jpg + .mp4 from Instagram */
-    { name:"Jelah Michelle",   role:"Founding member", thumb:"", src:"" },  /* TODO: add advocates/jelah-michelle.jpg + .mp4 from Instagram */
+    { name:"Ashylnn Savannah", role:"Founding member", thumb:"advocates/Ashlynn.jpg",  src:"advocates/Ashlynn.mp4" },
+    { name:"Jamail Mathews",   role:"Founding member", thumb:"advocates/Jamail.jpg",   src:"advocates/Jamail.mp4" },
+    { name:"Anissa",           role:"Founding member", thumb:"advocates/Anissa.jpg",   src:"advocates/Anissa.mp4" },
+    { name:"Chiselwa",         role:"Founding member", thumb:"advocates/Chiselwa.jpg", src:"advocates/Chiselwa.mp4" },
+    { name:"Jelah Michelle",   role:"Founding member", thumb:"advocates/Jelah.jpg",    src:"advocates/Jelah.mp4" },
+    { name:"Jaylen",           role:"Founding member", thumb:"advocates/Jaylen.jpg",   src:"advocates/Jaylen.mp4" },
+    { name:"Paris",            role:"Founding member", thumb:"advocates/Paris.jpg",    src:"advocates/Paris.mp4" },
   ];
 
   const playIcon = `<svg width="18" height="18" viewBox="0 0 24 24"><path pathLength="1" d="M8 5v14l11-7z" fill="var(--cream)"/></svg>`;
   const addIcon  = `<svg width="18" height="18" viewBox="0 0 24 24"><path pathLength="1" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="var(--cream-faint)"/></svg>`;
 
   const reelRow = document.getElementById('reel-row');
-  ADVOCATES.forEach((a,i)=>{
+  [...ADVOCATES].reverse().forEach((a,i)=>{
     const card     = document.createElement('div');
     const hasVideo = !!a.src;
     const hasThumb = !!a.thumb;
