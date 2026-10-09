@@ -72,6 +72,11 @@
     border:1px solid var(--gold-line);padding:10px 18px;border-radius:999px;transition:.25s;
   }
   .nav a.cta-ghost:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .nav a.nav-link{
+    font-size:13.5px;font-weight:500;letter-spacing:.02em;color:var(--cream-dim);
+    text-decoration:none;transition:color .2s;
+  }
+  .nav a.nav-link:hover{color:var(--gold)}
   .nav-right{display:flex;align-items:center;gap:12px}
   .sound-toggle{
     width:34px;height:34px;border-radius:50%;border:1px solid var(--gold-line);background:var(--gold-soft);
@@ -208,6 +213,42 @@
   }
   .lightbox .close:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 
+  /* ---- inline advocate video ---- */
+  .reel-card .card-video{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    border-radius:inherit;display:none;z-index:2;background:#000;
+  }
+  .reel-card.playing .card-video{display:block}
+  .reel-card.playing .card-thumb{opacity:0}
+  .reel-card.playing .card-info{opacity:0;pointer-events:none;transition:opacity .2s}
+  .reel-card .card-close{
+    display:none;position:absolute;top:10px;right:10px;z-index:4;
+    width:32px;height:32px;border-radius:50%;
+    background:rgba(10,10,10,.7);border:1px solid rgba(201,168,76,.4);
+    color:#fff;font-size:18px;line-height:1;cursor:pointer;
+    align-items:center;justify-content:center;
+  }
+  .reel-card.playing .card-close{display:flex}
+  .reel-card .card-close:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+
+  /* ---- recap section ---- */
+  .recap-section{padding:80px 0;border-top:1px solid rgba(201,168,76,.12)}
+  .recap-section .eyebrow{display:block;margin-bottom:12px}
+  .recap-section h3{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:32px;max-width:600px}
+  .recap-player{
+    position:relative;width:100%;max-width:900px;
+    aspect-ratio:16/9;background:#0a0a0a;border-radius:12px;
+    border:1px solid rgba(201,168,76,.18);overflow:hidden;
+  }
+  .recap-player video{width:100%;height:100%;object-fit:cover;display:block}
+  .recap-placeholder{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:16px;
+    background:#0a0a0a;color:rgba(255,255,255,.35);font-size:.85rem;
+    letter-spacing:.1em;text-transform:uppercase;
+  }
+  .recap-placeholder svg{opacity:.3}
+
   /* ---- how it works ---- */
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
   .card{
@@ -300,22 +341,6 @@
   /* ---- network field canvas ---- */
   .net-field{position:absolute;inset:0;z-index:0;pointer-events:none}
 
-  /* ---- globe hero background (atmospheric; JS caps base opacity at .55) ---- */
-  .hero-globe{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center 70%;
-    z-index:0;pointer-events:none;
-    opacity:0;transition:opacity 2s var(--ease);
-    will-change:transform,opacity;
-    transform-origin:center 70%;
-    animation:globeBreathe 12s ease-in-out infinite alternate;
-  }
-  @keyframes globeBreathe{from{transform:scale(1)}to{transform:scale(1.04)}}
-  @keyframes globeBreatheSm{from{transform:scale(1)}to{transform:scale(1.02)}}
-  @media(max-width:767px){
-    .hero-globe{object-position:65% 70%;animation-name:globeBreatheSm}
-  }
-
   /* ---- hero CTA → form expand ---- */
   .hero-cta{margin-top:34px}
   .hero-form-expand{
@@ -328,95 +353,87 @@
     .hero-form-expand.open{max-height:720px}
   }
 
-  /* ---- globe moment (full-screen cinematic section) ---- */
-  /* wrapper co-locates the hero behind the globe (hero is positioned absolute at top:0
-     by the ScrollTrigger JS during the pinned experience; in the reduced-motion / no-GSAP
-     fallback the hero stays in normal flow right below the globe — no gap either way) */
-  #globe-hero-wrapper{position:relative}
-  /* pointer-events:none so clicks fall through to the hero underneath once the dissolve
-     reveals it — the gm-cta link re-enables itself locally (pointer-events:auto, below) */
-  #globe-moment{height:100vh;position:relative;overflow:hidden;z-index:1;pointer-events:none}
-  /* Three.js WebGL canvas — injected by JS at scene start */
-  #globe-moment .globe-canvas{
-    position:absolute;inset:0;width:100%;height:100%;
-    z-index:0;pointer-events:none;
-  }
-  /* static fallback — shown only when WebGL is unavailable */
-  .globe-fallback{
+  /* ---- video hero (full-screen cinematic opener) ---- */
+  /* pointer-events:none so clicks fall through below where relevant — the vh-cta
+     link re-enables pointer events on itself (same pattern the globe moment used) */
+  #video-hero{height:100vh;position:relative;overflow:hidden;z-index:1;pointer-events:none}
+  #video-hero .video-hero-media,
+  #video-hero .video-hero-poster{
     position:absolute;inset:0;width:100%;height:100%;
     object-fit:cover;object-position:center 55%;
-    z-index:0;pointer-events:none;display:none;
+    z-index:0;pointer-events:none;
+    filter:contrast(1.05) saturate(1.05) brightness(0.96);
   }
-  /* keep the SVG network lines just above the globe */
-  #globe-moment .line-field{z-index:1}
-  .globe-moment-copy{
-    position:absolute;top:12%;left:0;right:0;z-index:10;
-    text-align:center;padding:0 24px;pointer-events:none;
+  /* static fallback frame — shown instead of <video> on mobile, reduced-data,
+     prefers-reduced-motion, or if autoplay is blocked (JS toggles display) */
+  .video-hero-poster{display:none}
+  /* dark gradient scrim so the eyebrow/headline/CTA stay legible over the footage —
+     matches the approved "Option A" preview: darker overall, heaviest at the bottom
+     where the copy sits */
+  .video-hero-scrim{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.3) 35%, rgba(10,10,10,.65) 75%, rgba(10,10,10,.92) 100%),
+      radial-gradient(900px 500px at 78% -8%, rgba(201,168,76,.14), transparent 60%);
   }
-  .globe-moment-copy .gm-eyebrow{
+  /* local grain layer — the sitewide .grain div (body::before/.grain, z-index:1) sits
+     earlier in the DOM than #video-hero, which also stacks at z-index:1, so the hero's
+     own stacking context paints over it and the texture never showed through here.
+     Same noise pattern, scoped to this section so it actually renders on top. */
+  .video-hero-grain{
+    position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* keep the SVG network lines just above the grain */
+  #video-hero .line-field{z-index:3}
+  .video-hero-copy{
+    position:absolute;inset:0;left:0;right:0;z-index:10;
+    max-width:var(--maxw);margin:0 auto;padding:0 40px clamp(60px,9vh,90px);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    text-align:left;pointer-events:none;
+  }
+  .video-hero-copy .vh-eyebrow{
     display:block;font-size:12px;font-weight:600;letter-spacing:.32em;
-    text-transform:uppercase;color:var(--gold);margin-bottom:14px;
+    text-transform:uppercase;color:var(--gold);margin-bottom:18px;
   }
-  .globe-moment-copy .gm-line{
+  .video-hero-copy .vh-line{
     font-family:var(--display);font-weight:500;color:var(--cream);
-    font-size:clamp(2rem,5vw,3.8rem);line-height:1.05;margin:0;
+    font-size:clamp(2.2rem,6vw,4.4rem);line-height:.98;letter-spacing:-.02em;margin:0;
+    text-shadow:0 4px 30px rgba(0,0,0,.4);
   }
-  /* event CTA — lives inside the cinematic globe moment (copy is pointer-events:none,
+  .video-hero-copy .vh-sub{
+    font-family:var(--body);font-weight:400;color:var(--cream-dim);
+    max-width:560px;margin:18px 0 0;font-size:17px;line-height:1.5;
+  }
+  /* event CTA — lives inside the video hero (copy is pointer-events:none,
      so the link re-enables pointer events on itself) */
-  .gm-cta{
-    display:inline-flex;align-items:center;gap:10px;margin-top:clamp(30px,6vh,58px);
+  .vh-cta{
+    display:inline-flex;align-items:center;gap:10px;margin-top:clamp(26px,4vh,34px);
     pointer-events:auto;font-family:var(--body);font-weight:600;font-size:12.5px;
     letter-spacing:.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;
     border:1px solid var(--gold-line);background:var(--gold-soft);backdrop-filter:blur(4px);
     padding:13px 22px;border-radius:999px;transition:transform .25s,background .25s,color .25s,box-shadow .25s;
   }
-  .gm-cta:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 14px 40px -16px rgba(201,168,76,.7)}
-  .gm-cta .gm-cta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 var(--gold);animation:pulse 2.4s infinite}
-  .gm-cta:hover .gm-cta-dot{background:var(--ink)}
-  .gm-cta .gm-cta-arrow{transition:transform .25s}
-  .gm-cta:hover .gm-cta-arrow{transform:translateX(3px)}
-  /* WebGL overlay canvas sits inside the crop box */
-  .globe-crop .globe-canvas{
-    position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
-  }
-
-  /* static globe crop — full-bleed base layer (fills the whole section so there is
-     no letterboxed band that would show as black/gray at high zoom). The zoom scale +
-     transform-origin are applied to this element by the ScrollTrigger JS. */
-  .globe-crop{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    pointer-events:none;
-  }
-  .globe-crop img{
-    width:100%;
-    height:100%;
-    object-fit:cover;            /* covers the entire section, no letterboxing */
-    object-position:center 60%;  /* keeps the globe in the lower portion */
-    filter:
-      contrast(1.08)
-      saturate(1.06)
-      brightness(0.96);
-  }
+  .vh-cta:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 14px 40px -16px rgba(201,168,76,.7)}
+  .vh-cta .vh-cta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 var(--gold);animation:pulse 2.4s infinite}
+  .vh-cta:hover .vh-cta-dot{background:var(--ink)}
+  .vh-cta .vh-cta-arrow{transition:transform .25s}
+  .vh-cta:hover .vh-cta-arrow{transform:translateX(3px)}
 
   /* mobile-only scroll hint */
-  .globe-scroll-hint{
+  .video-hero-scroll-hint{
     display:block;position:absolute;left:50%;
     bottom:calc(26px + env(safe-area-inset-bottom, 0px));z-index:10;
     transform:translateX(-50%);color:var(--gold);pointer-events:auto;cursor:pointer;
-    font-size:22px;line-height:1;animation:gmBounce 1.8s var(--ease) infinite;
+    font-size:22px;line-height:1;animation:vhBounce 1.8s var(--ease) infinite;
     background:none;border:none;padding:8px;
     opacity:0;transition:opacity 0.5s var(--ease);
   }
-  @keyframes gmBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+  @keyframes vhBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
   @media(max-width:767px){
-    #globe-moment{min-height:100vh}
-    .globe-fallback{object-position:center 50%}
-    .globe-scroll-hint{display:block}
+    #video-hero{min-height:100vh}
+    .video-hero-poster{object-position:center 50%}
+    .video-hero-scroll-hint{display:block}
   }
 
   /* ---- line field (gold connection lines) ---- */
@@ -491,9 +508,7 @@
     .line-field path{stroke-dashoffset:0;stroke-opacity:.13;transition:none}
     .float-card{opacity:1;transform:none;transition:none}
     .hero-animate{opacity:1;transform:none;filter:none;transition:none}
-    .hero-globe{animation:none;transition:none;opacity:.55;transform:none}
-    .globe-fallback{opacity:1}
-    .globe-scroll-hint{animation:none}
+    .video-hero-scroll-hint{animation:none}
     .page-exit{transition:none}
     .intro-wordmark{transition:none}
     .hero h1 .struck::after{animation:none;transform:scaleX(1)}
@@ -528,6 +543,7 @@
   <div class="wrap nav">
     <div class="brand intro-pending" id="nav-brand">Leverage<b>BLK</b></div>
     <div class="nav-right">
+      <a href="events.html" class="nav-link" data-track="nav_events" data-transition>Events</a>
       <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Play ambient sound">
         <svg class="icon-off" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><line x1="16" y1="9" x2="21" y2="14"/><line x1="21" y1="9" x2="16" y2="14"/></svg>
         <svg class="icon-on" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>
@@ -569,18 +585,19 @@
 })();
 </script>
 
-<!-- globe-moment + hero share one wrapper so the hero is co-located behind the globe:
-     when the pin releases there is no scroll-distance to travel — the hero is already there -->
-<div id="globe-hero-wrapper">
-<!-- 0 · GLOBE MOMENT — cinematic opener, full-screen, no conversion -->
-<section id="globe-moment">
-  <div class="globe-crop" aria-hidden="true">
-    <picture>
-      <source media="(max-width:768px)" srcset="assets/globe-mobile.png">
-      <img src="assets/globe.png" alt="">
-    </picture>
-  </div>
-  <img class="globe-fallback" src="assets/globe.png" alt="" aria-hidden="true">
+<!-- 0 · VIDEO HERO — cinematic opener, full-bleed autoplay recap loop, no conversion.
+     Replaces the former Three.js globe moment. Video autoplays muted/looped on desktop;
+     falls back to the static recap-poster.jpg on mobile, reduced-data connections,
+     prefers-reduced-motion, or if autoplay is blocked — same fallback pattern the old
+     WebGL globe used (assets/globe.png when WebGL was unavailable). -->
+<section id="video-hero">
+  <video class="video-hero-media" autoplay muted loop playsinline preload="auto"
+         poster="assets/event-june/home-poster.jpg" aria-hidden="true">
+    <source src="assets/event-june/home-loop.mp4" type="video/mp4">
+  </video>
+  <img class="video-hero-poster" src="assets/event-june/home-poster.jpg" alt="" aria-hidden="true">
+  <div class="video-hero-scrim" aria-hidden="true"></div>
+  <div class="video-hero-grain" aria-hidden="true"></div>
   <svg class="line-field" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
     <path pathLength="1" d="M0,24 L28,52 L62,26 L100,54"/>
     <path pathLength="1" d="M-2,66 L32,46 L68,72 L101,42"/>
@@ -588,16 +605,16 @@
     <path pathLength="1" d="M4,88 L36,62 L72,86 L100,60"/>
     <path pathLength="1" d="M8,44 L38,22 L74,50 L98,24"/>
   </svg>
-  <div class="globe-moment-copy">
-    <span class="gm-eyebrow reveal">Real connections</span>
-    <p class="gm-line reveal">Where your culture is your credential.</p>
-    <a class="gm-cta reveal" href="culture-connects.html" data-track="event_cta" data-transition>
-      <span class="gm-cta-dot"></span>
+  <div class="video-hero-copy">
+    <span class="vh-eyebrow reveal">Real connections</span>
+    <p class="vh-line reveal">Where your culture is your credential.</p>
+    <a class="vh-cta reveal" href="culture-connects.html" data-track="event_cta" data-transition>
+      <span class="vh-cta-dot"></span>
       Culture Connects: ATX · Jul 12 · Austin
-      <span class="gm-cta-arrow">→</span>
+      <span class="vh-cta-arrow">→</span>
     </a>
   </div>
-  <button class="globe-scroll-hint" aria-label="Scroll to see more">↓</button>
+  <button class="video-hero-scroll-hint" aria-label="Scroll to see more">↓</button>
 </section>
 
 <!-- 1 · HERO — StarField, headline + tagline, expand-form CTA -->
@@ -663,13 +680,6 @@
       </div>
   </div>
 </section>
-</div><!-- /#globe-hero-wrapper -->
-<!-- hero is position:absolute inside the wrapper during the GSAP path, so it
-     contributes zero height to the wrapper's box — on mobile, where hero's actual
-     content (headline + 4 form fields + notes) is far taller than the globe's 100vh,
-     #why would start overlapping hero's lower content without this. Height is set by
-     JS (syncHeroOverflowSpacer) to exactly cover hero's overflow past the wrapper. -->
-<div id="hero-overflow-spacer" aria-hidden="true" style="height:0"></div>
 
 <!-- 01 · ADVOCACY / THE WHY -->
 <section class="block" id="why">
@@ -717,6 +727,26 @@
       <span class="reels-hint">Scroll for more →</span>
     </div>
     <div class="reels-row reveal" id="reel-row"></div>
+  </div>
+</section>
+
+<!-- RECAP VIDEO -->
+<section class="block recap-section">
+  <div class="wrap">
+    <span class="eyebrow reveal">Event Recap</span>
+    <h3 class="reveal">The room in motion — our last gathering.</h3>
+    <div class="recap-player reveal" id="recap-player">
+      <!-- drop recap video file into leverage-landing/ and replace placeholder below:
+           <video src="recap.mp4" controls playsinline poster="recap-thumb.jpg"></video>
+      -->
+      <div class="recap-placeholder" id="recap-placeholder">
+        <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1.5"/>
+          <polygon points="19,15 35,24 19,33" fill="currentColor"/>
+        </svg>
+        <span>Recap video coming soon</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1031,27 +1061,45 @@
     reelRow.appendChild(card);
   });
 
-  // ---- lightbox ----
-  const lightbox = document.getElementById('lightbox');
-  const lightboxVideo = document.getElementById('lightbox-video');
-  const lightboxClose = document.getElementById('lightbox-close');
-
+  // ---- inline advocate video ----
   reelRow.addEventListener('click', e=>{
     const card = e.target.closest('.reel-card');
-    if(!card || !card.dataset.src) return;
-    lightboxVideo.src = card.dataset.src;
-    lightbox.classList.add('open');
-    window.trackEvent('advocate_video_play', {name: card.dataset.name});
+    if(!card) return;
+    if(e.target.closest('.card-close')){ stopCard(card); return; }
+    if(!card.dataset.src) return;
+    reelRow.querySelectorAll('.reel-card.playing').forEach(c=>{ if(c!==card) stopCard(c); });
+    playCard(card);
   });
-  function closeLightbox(){
-    lightbox.classList.remove('open');
-    lightboxVideo.pause();
-    lightboxVideo.removeAttribute('src');
-    lightboxVideo.load();
+
+  function playCard(card){
+    let vid = card.querySelector('.card-video');
+    if(!vid){
+      vid = document.createElement('video');
+      vid.className = 'card-video';
+      vid.setAttribute('playsinline','');
+      vid.setAttribute('controls','');
+      vid.src = card.dataset.src;
+      card.appendChild(vid);
+      const btn = document.createElement('button');
+      btn.className = 'card-close';
+      btn.innerHTML = '&times;';
+      btn.setAttribute('aria-label','Close video');
+      card.appendChild(btn);
+    }
+    card.classList.add('playing');
+    vid.play().catch(()=>{});
+    window.trackEvent('advocate_video_play', {name: card.dataset.name});
   }
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', e=>{ if(e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeLightbox(); });
+
+  function stopCard(card){
+    const vid = card.querySelector('.card-video');
+    if(vid){ vid.pause(); vid.currentTime = 0; }
+    card.classList.remove('playing');
+  }
+
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') reelRow.querySelectorAll('.reel-card.playing').forEach(stopCard);
+  });
 
   // ---- generic CTA tracking ----
   document.querySelectorAll('[data-track]').forEach(el=>{
@@ -1285,11 +1333,12 @@
       });
     }
 
-    // ─── HERO ENTRANCE — retriggered when the globe dissolve reveals the hero ────
-    // The hero sits hidden (opacity:0) behind the globe until the GSAP ScrollTrigger
-    // dissolve crosses ~78% progress. Firing entrance on a page-load timer means the
-    // Jitter drift-in (and everything else) settles while invisible — never seen.
-    // window.__triggerHeroEntrance is called from the dissolve onUpdate handler below.
+    // ─── HERO ENTRANCE — fires once the hero section scrolls into view ───────
+    // The hero now sits in normal document flow right below the video hero (the
+    // globe's pinned dissolve transition is gone), so entrance is driven by the
+    // same IntersectionObserver pattern used for .reveal elsewhere in this file,
+    // rather than a scroll-scrub handler. window.__triggerHeroEntrance stays
+    // exposed in case anything else wants to force it.
     const heroAnimEls = Array.from(document.querySelectorAll('.hero-animate'));
     let heroEntranceFired = false;
     function triggerHeroEntrance(){
@@ -1305,21 +1354,18 @@
       heroEntranceFired = true;
       heroAnimEls.forEach(el => el.classList.add('in'));
       revealCards();
-    } else if(location.hash === '#hero'){
-      // fallback: a direct deep link to #hero bypasses the globe scroll-through
-      // entirely (the GSAP dissolve trigger never fires) — reveal shortly after
-      // the hero is actually visible instead of leaving it hidden forever.
-      const heroFallbackEl = document.querySelector('.hero');
-      if(heroFallbackEl){
-        const heroFallbackIO = new IntersectionObserver(entries => {
+    } else {
+      const heroEl = document.querySelector('.hero');
+      if(heroEl){
+        const heroIO = new IntersectionObserver(entries => {
           entries.forEach(e => {
             if(e.isIntersecting){
-              setTimeout(triggerHeroEntrance, 2000);
-              heroFallbackIO.disconnect();
+              triggerHeroEntrance();
+              heroIO.disconnect();
             }
           });
-        }, { threshold: 0.1 });
-        heroFallbackIO.observe(heroFallbackEl);
+        }, { threshold: 0.15 });
+        heroIO.observe(heroEl);
       }
     }
 
@@ -1365,659 +1411,51 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     THREE.JS WEBGL GLOBE — #globe-moment cinematic opener
-     Replaces the static globe image with a live scene. Self-contained;
-     falls back to assets/globe.png if Three/WebGL is unavailable.
+     VIDEO HERO — #video-hero autoplay fallback
+     Replaces the former Three.js WebGL globe scene. No build step, no
+     extra libraries — plain muted/looped <video> with the same
+     fallback philosophy the globe used (swap to a static image when
+     the dynamic version can't/shouldn't run): mobile, reduced-data
+     connections, prefers-reduced-motion, or a blocked autoplay() all
+     fall back to assets/event-june/recap-poster.jpg.
 ═════════════════════════════════════════════════════════════════ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script>
 (function(){
-  const section = document.getElementById('globe-moment');
+  const section = document.getElementById('video-hero');
   if(!section) return;
-  const fallbackImg = section.querySelector('.globe-fallback');
+  const video  = section.querySelector('.video-hero-media');
+  const poster = section.querySelector('.video-hero-poster');
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = window.matchMedia('(max-width: 767px)').matches;
-  const EASE_OUT = t => 1 - Math.pow(1 - t, 3);   // cubic ease-out ≈ the site EASE
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
 
-  function showFallback(){
-    if(fallbackImg){ fallbackImg.style.display = 'block'; fallbackImg.style.opacity = '1'; }
+  function showPoster(){
+    if(video)  video.style.display  = 'none';
+    if(poster) poster.style.display = 'block';
   }
 
-  // ── WebGL availability + Three presence ──
-  function webglAvailable(){
-    try{
-      const c = document.createElement('canvas');
-      return !!(window.WebGLRenderingContext &&
-        (c.getContext('webgl') || c.getContext('experimental-webgl')));
-    }catch(e){ return false; }
-  }
-  if(typeof THREE === 'undefined' || !webglAvailable()){ showFallback(); return; }
+  // mirrors the old globe-moment fallback decision: skip the dynamic version
+  // entirely on mobile, reduced-data connections, and prefers-reduced-motion
+  if(!video || noMotion || isMobile || saveData){ showPoster(); return; }
 
-  // canvas mounts inside the crop box, not the full section
-  const cropEl = section.querySelector('.globe-crop');
-  if(!cropEl){ showFallback(); return; }
-
-  let renderer;
-  try{
-    renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-  }catch(e){ showFallback(); return; }
-  if(!renderer.getContext || !renderer.getContext()){ showFallback(); return; }
-
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setSize(cropEl.offsetWidth, cropEl.offsetHeight);
-  renderer.setClearColor(0x000000, 0);          // transparent — static image shows through
-  const canvas = renderer.domElement;
-  canvas.className = 'globe-canvas';
-  canvas.setAttribute('aria-hidden', 'true');
-  canvas.style.opacity = '0';
-  cropEl.appendChild(canvas);
-
-  // ── scene + camera ──
-  // Telephoto-ish framing (farther camera + narrow FOV) flattens the horizon into
-  // a gentle wide arc; the globe is dropped low so its top sits in the upper-middle
-  // with a big black field above for the headline — matching the reference render.
-  // framing is responsive — portrait mobile needs a wider FOV / less zoom so the
-  // globe still reads as a horizon rather than over-zooming into the surface
-  const FOV    = isMobile ? 50   : 30;
-  const CAM_Z  = isMobile ? 3.0  : 4.0;
-  const GSCALE = isMobile ? 1.15 : 1.6;
-  const GY     = isMobile ? -0.78 : -1.15;
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(FOV, cropEl.offsetWidth / cropEl.offsetHeight, 0.1, 1000);
-  camera.position.set(0, 0.6, CAM_Z);
-  camera.lookAt(0, GY, 0);
-
-  const SEG = isMobile ? 32 : 64;
-
-  // globe group — scaled up so its left/right edges run off-frame (globe fills the
-  // width like the reference), dropped well below center so the horizon lands
-  // ~top-third with a big black field above for the headline
-  const globe = new THREE.Group();
-  globe.scale.setScalar(GSCALE);
-  globe.position.y = GY;
-  // orient so the globe.png Atlantic-facing viewpoint aligns with the static image
-  const BASE_RY = Math.PI * 0.22;   // ~40° — faces Atlantic, Americas left, Europe/Africa right
-  const BASE_RX = -0.28;            // ~16° tilt — matches the elevated camera angle in globe.png
-  globe.rotation.y = BASE_RY;
-  globe.rotation.x = BASE_RX;
-  scene.add(globe);
-
-  // ── lat/lng → 3D position ──
-  function latLngToVec3(lat, lng, radius = 1.02){
-    const phi   = (90 - lat) * (Math.PI / 180);
-    const theta = (lng + 180) * (Math.PI / 180);
-    return new THREE.Vector3(
-      -radius * Math.sin(phi) * Math.cos(theta),
-       radius * Math.cos(phi),
-       radius * Math.sin(phi) * Math.sin(theta)
-    );
+  // autoplay can still be blocked by the browser even when muted (rare, but
+  // happens) — fall back to the static poster rather than showing a frozen
+  // first frame with no motion at all
+  const playPromise = video.play();
+  if(playPromise && typeof playPromise.catch === 'function'){
+    playPromise.catch(showPoster);
   }
 
-  const CITIES = [
-    // North America
-    { name:'New York',     lat: 40.71, lng: -74.01, size:0.018, primary:true  },
-    { name:'Atlanta',      lat: 33.75, lng: -84.39, size:0.012, primary:true  },
-    { name:'Chicago',      lat: 41.88, lng: -87.63, size:0.010, primary:false },
-    { name:'Los Angeles',  lat: 34.05, lng:-118.24, size:0.009, primary:false },
-    { name:'Toronto',      lat: 43.65, lng: -79.38, size:0.009, primary:false },
-    { name:'Washington',   lat: 38.91, lng: -77.04, size:0.010, primary:false },
-    { name:'Houston',      lat: 29.76, lng: -95.37, size:0.008, primary:false },
-    { name:'Miami',        lat: 25.77, lng: -80.19, size:0.008, primary:false },
-    // Caribbean / Latin America
-    { name:'Kingston',     lat: 17.99, lng: -76.79, size:0.008, primary:false },
-    { name:'São Paulo',    lat:-23.55, lng: -46.63, size:0.009, primary:false },
-    { name:'Bogotá',       lat:  4.71, lng: -74.07, size:0.008, primary:false },
-    // Europe
-    { name:'London',       lat: 51.51, lng:  -0.13, size:0.013, primary:true  },
-    { name:'Paris',        lat: 48.85, lng:   2.35, size:0.009, primary:false },
-    { name:'Amsterdam',    lat: 52.37, lng:   4.90, size:0.008, primary:false },
-    { name:'Frankfurt',    lat: 50.11, lng:   8.68, size:0.008, primary:false },
-    { name:'Madrid',       lat: 40.42, lng:  -3.70, size:0.008, primary:false },
-    { name:'Stockholm',    lat: 59.33, lng:  18.07, size:0.007, primary:false },
-    // Africa
-    { name:'Lagos',        lat:  6.52, lng:   3.38, size:0.013, primary:true  },
-    { name:'Accra',        lat:  5.56, lng:  -0.20, size:0.010, primary:false },
-    { name:'Nairobi',      lat: -1.29, lng:  36.82, size:0.009, primary:false },
-    { name:'Johannesburg', lat:-26.20, lng:  28.04, size:0.010, primary:false },
-    { name:'Cairo',        lat: 30.04, lng:  31.24, size:0.009, primary:false },
-    { name:'Casablanca',   lat: 33.57, lng:  -7.59, size:0.008, primary:false },
-    { name:'Addis Ababa',  lat:  9.03, lng:  38.74, size:0.008, primary:false },
-    // Middle East
-    { name:'Dubai',        lat: 25.20, lng:  55.27, size:0.010, primary:false },
-    { name:'Riyadh',       lat: 24.69, lng:  46.72, size:0.008, primary:false },
-    // South Asia
-    { name:'Mumbai',       lat: 19.08, lng:  72.88, size:0.010, primary:false },
-    { name:'Bangalore',    lat: 12.97, lng:  77.59, size:0.008, primary:false },
-    { name:'Karachi',      lat: 24.86, lng:  67.01, size:0.008, primary:false },
-    // Southeast Asia
-    { name:'Singapore',    lat:  1.35, lng: 103.82, size:0.010, primary:false },
-    { name:'Bangkok',      lat: 13.75, lng: 100.52, size:0.008, primary:false },
-    { name:'Manila',       lat: 14.60, lng: 120.98, size:0.008, primary:false },
-    // East Asia
-    { name:'Tokyo',        lat: 35.69, lng: 139.69, size:0.011, primary:false },
-    { name:'Seoul',        lat: 37.57, lng: 126.98, size:0.009, primary:false },
-    { name:'Shanghai',     lat: 31.23, lng: 121.47, size:0.009, primary:false },
-    { name:'Hong Kong',    lat: 22.32, lng: 114.17, size:0.009, primary:false },
-    // Oceania
-    { name:'Sydney',       lat:-33.87, lng: 151.21, size:0.009, primary:false },
-    { name:'Melbourne',    lat:-37.81, lng: 144.96, size:0.008, primary:false },
-  ];
-  const cityByName = {};
-  CITIES.forEach(c => cityByName[c.name] = c);
-
-  // radial glow texture (shared) for additive city/point lights
-  function makeGlowTexture(color = '#D4B86A'){
-    const cv = document.createElement('canvas'); cv.width = cv.height = 64;
-    const ctx = cv.getContext('2d');
-    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    g.addColorStop(0,   color + 'FF');
-    g.addColorStop(0.3, color + 'AA');
-    g.addColorStop(1,   color + '00');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
-    return new THREE.CanvasTexture(cv);
+  // reveal the mobile-only scroll hint once the intro overlay clears, same
+  // timing convention the globe moment used
+  const scrollHint = section.querySelector('.video-hero-scroll-hint');
+  if(scrollHint){
+    const showHint = () => { scrollHint.style.opacity = '1'; };
+    if(window.__introLanded) showHint();
+    else window.addEventListener('intro-landed', showHint, { once: true });
   }
-  const glowTex = makeGlowTexture();
-
-  // named-city lights — additive glow sprites (primary hubs brighter/larger)
-  // collected into citySprites[] so the dissolve transition can scatter them
-  const citySprites = [];
-  const citySpriteMat = new THREE.SpriteMaterial({
-    map:glowTex, color:0xD4B86A, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, depthTest:false
-  });
-  CITIES.forEach(c => {
-    const s = new THREE.Sprite(citySpriteMat.clone());
-    s.position.copy(latLngToVec3(c.lat, c.lng, 1.02));
-    const sc = c.primary ? 0.072 : 0.040;
-    s.scale.set(sc, sc, 1);
-    globe.add(s);
-    citySprites.push({ sprite:s, home:s.position.clone(), baseOpacity:s.material.opacity, primary:c.primary });
-  });
-
-  // background city-light network — seeded glow points near the named metros.
-  // One additive Points cloud (glow texture as the point sprite) — the perfless
-  // way to get the "lights add where they cluster" fill without 180 draw calls.
-  function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0;
-    let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  const rand = mulberry32(20260625);
-  const BG = isMobile ? 70 : 420;                 // dense city-light web like reference
-  const bgPos = new Float32Array(BG * 3);
-  const bgCol = new Float32Array(BG * 3);
-  const gold  = new THREE.Color(0xD4B86A);
-  for(let i = 0; i < BG; i++){
-    const c = CITIES[Math.floor(rand() * CITIES.length)];
-    const p = latLngToVec3(c.lat + (rand() - 0.5) * 10, c.lng + (rand() - 0.5) * 10, 1.015);
-    bgPos[i*3] = p.x; bgPos[i*3+1] = p.y; bgPos[i*3+2] = p.z;
-    const k = 0.4 + rand() * 0.3;                 // brightness ≈ random opacity 0.4–0.7
-    bgCol[i*3] = gold.r * k; bgCol[i*3+1] = gold.g * k; bgCol[i*3+2] = gold.b * k;
-  }
-  const bgGeo = new THREE.BufferGeometry();
-  bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
-  bgGeo.setAttribute('color',    new THREE.BufferAttribute(bgCol, 3));
-  const bgMat = new THREE.PointsMaterial({
-    map:glowTex, size:0.032, vertexColors:true, transparent:true,
-    blending:THREE.AdditiveBlending, depthWrite:false, depthTest:false, sizeAttenuation:true
-  });
-  const bgPoints = new THREE.Points(bgGeo, bgMat);
-  globe.add(bgPoints);
-  // home buffer (for re-arm reset) — the dissolve expands the cloud outward from these
-  const bgHome = bgPos.slice();
-
-  // ── arcs ──
-  function buildArcPoints(fromCity, toCity, altitude = 0.35){
-    const start = latLngToVec3(fromCity.lat, fromCity.lng, 1.02);
-    const end   = latLngToVec3(toCity.lat,   toCity.lng,   1.02);
-    const mid   = start.clone().add(end).normalize().multiplyScalar(1 + altitude);
-    return new THREE.CatmullRomCurve3([start, mid, end]).getPoints(80);
-  }
-  // additive arc material — glows against the dark surface
-  function arcMat(opacity){
-    return new THREE.LineBasicMaterial({
-      color:0xD4B86A, transparent:true, opacity,
-      blending:THREE.AdditiveBlending, depthWrite:false, depthTest:false, linewidth:1
-    });
-  }
-  // every arc material is collected so the dissolve can fade them together
-  const arcMaterials = [];
-  // single-line arc (secondary)
-  function makeArc(fromName, toName, opacity){
-    const pts = buildArcPoints(cityByName[fromName], cityByName[toName]);
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const m = arcMat(opacity);
-    const line = new THREE.Line(geo, m);
-    globe.add(line);
-    arcMaterials.push({ mat:m, baseOpacity:opacity });
-    return { geo, total: pts.length };
-  }
-  // layered arc (primary) — 3 lines on one shared geometry at increasing scale +
-  // decreasing opacity to fake glow/thickness (linewidth is unreliable in WebGL)
-  function makeLayeredArc(fromName, toName, baseOpacity){
-    const pts = buildArcPoints(cityByName[fromName], cityByName[toName]);
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    // 4 layers: bright core + progressively wider/dimmer glow rings
-    [[baseOpacity, 1.0], [baseOpacity * 0.65, 1.006], [baseOpacity * 0.38, 1.016], [baseOpacity * 0.14, 1.034]]
-      .forEach(([op, sc]) => {
-        const m = arcMat(op);
-        const line = new THREE.Line(geo, m);
-        line.scale.setScalar(sc);
-        globe.add(line);
-        arcMaterials.push({ mat:m, baseOpacity:op });
-      });
-    return { geo, total: pts.length };       // shared geometry → one drawRange drives all 3 layers
-  }
-
-  // 3 primary arcs (NYC → London, Lagos, Atlanta) — draw in on enter, staggered
-  const PRIMARY = [
-    { from:'New York', to:'London',  opacity:1.00, startAt:0   },
-    { from:'New York', to:'Lagos',   opacity:1.00, startAt:400 },
-    { from:'New York', to:'Atlanta', opacity:0.95, startAt:800 },
-  ];
-  const primaryArcs = PRIMARY.map(a => {
-    const arc = makeLayeredArc(a.from, a.to, a.opacity);
-    arc.geo.setDrawRange(0, 0);              // hidden until drawn in
-    arc.startAt = a.startAt;
-    return arc;
-  });
-
-  // secondary arc network — wraps all the way around the globe (low opacity, no
-  // draw-in) so connections show on every face as it rotates, not just the Atlantic
-  [
-    // NYC hub spokes
-    ['New York','Accra',0.30], ['Atlanta','Lagos',0.28], ['New York','São Paulo',0.30],
-    ['Chicago','London',0.26], ['New York','Nairobi',0.24],
-    // Europe ↔ Africa
-    ['London','Johannesburg',0.25], ['London','Lagos',0.26], ['London','Accra',0.22],
-    ['London','Nairobi',0.22], ['Toronto','London',0.22],
-    // intra-Africa
-    ['Lagos','Johannesburg',0.24], ['Lagos','Accra',0.20], ['Lagos','Nairobi',0.22],
-    ['Accra','Johannesburg',0.20], ['Nairobi','Johannesburg',0.20],
-    // South America links
-    ['São Paulo','Lagos',0.24], ['São Paulo','Johannesburg',0.20], ['São Paulo','Accra',0.20],
-    ['Kingston','São Paulo',0.18], ['Houston','São Paulo',0.18],
-    // North America web
-    ['Los Angeles','Toronto',0.20], ['Los Angeles','New York',0.20], ['Houston','Kingston',0.20],
-    ['Chicago','Lagos',0.20], ['Washington','Nairobi',0.18],
-    // Middle East hub
-    ['Dubai','London',0.22], ['Dubai','Nairobi',0.22], ['Dubai','Johannesburg',0.20],
-    ['Dubai','Mumbai',0.22], ['Dubai','Singapore',0.20], ['Riyadh','Cairo',0.18],
-    // South Asia links
-    ['Mumbai','London',0.20], ['Mumbai','Nairobi',0.20], ['Mumbai','Singapore',0.22],
-    ['Bangalore','Singapore',0.18], ['Karachi','Dubai',0.18],
-    // East / Southeast Asia
-    ['Singapore','Tokyo',0.22], ['Singapore','Sydney',0.20], ['Singapore','Johannesburg',0.18],
-    ['Tokyo','Los Angeles',0.22], ['Seoul','Tokyo',0.18], ['Shanghai','Tokyo',0.18],
-    ['Hong Kong','Singapore',0.18], ['Manila','Tokyo',0.18], ['Bangkok','Singapore',0.18],
-    // Pacific
-    ['Sydney','Singapore',0.20], ['Sydney','Los Angeles',0.18], ['Melbourne','Sydney',0.15],
-    // Europe web
-    ['Paris','Lagos',0.20], ['Frankfurt','Dubai',0.18], ['Madrid','Casablanca',0.20],
-    ['Cairo','Nairobi',0.20], ['Cairo','Dubai',0.18], ['Addis Ababa','Dubai',0.18],
-  ].forEach(([f,t,o]) => makeArc(f, t, o));
-
-  // ── render loop, rotation, scroll, IntersectionObserver ──
-  let visible = false, entered = false, enterTime = 0, rafId = null;
-  // gyroscope tilt — cursor position nudges the globe layer; lerped for smoothness
-  const isTouch = matchMedia('(hover: none)').matches;
-  let tiltTX = 0, tiltTY = 0, tiltX = 0, tiltY = 0;   // target + current
-
-  // ── dissolve state (driven by the GSAP ScrollTrigger pin/scrub below) ──
-  let isTransitioning = false;   // true once particles scatter — freezes gyro tilt, keeps render alive
-  let scatterFired    = false;   // one-shot latch for the particle scatter (reset on scroll-back)
-  let dissolveDone     = false;  // latch: dissolve has fully completed (reset on scroll-back)
-  let heroEntranceTimer = null;  // pending "wait 800ms after dissolve, then enter" timer
-  const txTimers = [];           // setTimeout refs cleared on cleanup
-  const txRafs   = [];           // rAF refs cancelled on cleanup
-  // tiny self-cleaning rAF tween: calls onUpdate(easedT) each frame for `dur` ms
-  function txTween(dur, onUpdate, onDone){
-    const t0 = performance.now();
-    const step = ts => {
-      const t = Math.min((ts - t0) / dur, 1);
-      onUpdate(EASE_OUT(t), t);
-      if(t < 1){ const id = requestAnimationFrame(step); txRafs.push(id); }
-      else if(onDone) onDone();
-    };
-    const id = requestAnimationFrame(step); txRafs.push(id);
-  }
-
-  function disposeAll(){
-    if(rafId) cancelAnimationFrame(rafId);
-    txTimers.forEach(clearTimeout); txTimers.length = 0;
-    txRafs.forEach(cancelAnimationFrame); txRafs.length = 0;
-    scene.traverse(o => {
-      if(o.geometry) o.geometry.dispose();
-      if(o.material){
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        mats.forEach(m => { if(m.map) m.map.dispose(); m.dispose(); });
-      }
-    });
-    renderer.dispose();
-  }
-
-  function frame(now){
-    rafId = requestAnimationFrame(frame);
-    if(!section.isConnected){ disposeAll(); return; }   // cleanup if removed from DOM
-    if(!visible) return;                                 // pause GPU when off-screen
-
-    if(entered){                                         // arc draw-in
-      for(const a of primaryArcs){
-        const elapsed = now - (enterTime + a.startAt);
-        let count;
-        if(elapsed <= 0) count = 0;
-        else count = Math.round(EASE_OUT(Math.min(elapsed / 1400, 1)) * a.total);
-        a.geo.setDrawRange(0, count);
-      }
-    }
-
-    if(!noMotion && !isTouch && !isTransitioning){       // gyroscope tilt — ease toward cursor target (frozen mid-dissolve)
-      tiltX += (tiltTX - tiltX) * 0.06;
-      tiltY += (tiltTY - tiltY) * 0.06;
-      globe.rotation.y = BASE_RY + tiltY;
-      globe.rotation.x = BASE_RX + tiltX;
-    }
-
-    renderer.render(scene, camera);
-  }
-  rafId = requestAnimationFrame(frame);
-
-  // pause/resume + trigger arc draw-in on section enter.
-  // CRITICAL: do not pause render while a dissolve is mid-flight — the canvas must
-  // keep drawing through the full sequence even as the section scrolls out of view.
-  new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if(!e.isIntersecting && isTransitioning) return;   // hold render open during dissolve
-      visible = e.isIntersecting;
-      if(e.isIntersecting && !entered){ entered = true; enterTime = performance.now(); }
-    });
-  }, { threshold: 0.01 }).observe(section);
-
-  // resize
-  new ResizeObserver(() => {
-    const w = cropEl.offsetWidth, h = cropEl.offsetHeight;
-    if(!w || !h) return;
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }).observe(cropEl);
-
-  // zoom origin — push toward the NYC hub in the full-bleed image (set once;
-  // ScrollTrigger drives the scale). Estimate for the cover composition — dial in
-  // visually: '48% 55%' shifts left/up, '56% 62%' shifts right/down.
-  cropEl.style.transformOrigin = '52% 58%';
-
-  // scatter one sprite outward along `dir` while fading to 0
-  function scatterSprite(cs){
-    const start = cs.sprite.position.clone();
-    const dir = start.clone().normalize();
-    dir.x += (Math.random() - 0.5) * 0.4;
-    dir.y += (Math.random() - 0.5) * 0.4;
-    dir.z += (Math.random() - 0.5) * 0.2;
-    const target = dir.multiplyScalar(1.8);
-    const base = cs.sprite.material.opacity;
-    txTween(800, eased => {
-      cs.sprite.position.lerpVectors(start, target, eased);
-      cs.sprite.material.opacity = base * (1 - eased);
-    });
-  }
-
-  // expand the seeded bg-points cloud outward + fade (single buffer tween)
-  function scatterBgPoints(){
-    const arr  = bgGeo.attributes.position.array;
-    const home = bgHome;
-    txTween(800, eased => {
-      const grow = 1 + eased * 0.8;             // push points outward from globe center
-      for(let i = 0; i < arr.length; i++) arr[i] = home[i] * grow;
-      bgGeo.attributes.position.needsUpdate = true;
-      bgMat.opacity = 1 - eased;
-    });
-  }
-
-  // one-shot scatter: city sprites fly out (per-sprite delay) + bg cloud expands + arcs fade
-  function scatterParticles(){
-    isTransitioning = true;                       // freeze gyro tilt while particles fly
-    const sprites = isMobile ? citySprites.filter(cs => cs.primary) : citySprites;
-    sprites.forEach(cs => txTimers.push(setTimeout(() => scatterSprite(cs), Math.random() * 200)));
-    if(!isMobile) scatterBgPoints();              // skip the 420-point buffer tween on mobile
-    const arcsStart = arcMaterials.map(a => a.mat.opacity);
-    txTween(600, eased => {
-      arcMaterials.forEach((a, i) => { a.mat.opacity = arcsStart[i] * (1 - eased); });
-      if(isMobile) bgMat.opacity = 1 - eased;     // mobile fades (doesn't scatter) the cloud
-    });
-  }
-
-  // reverse the scatter — used when the user scrubs back up out of the dissolve zone
-  function restoreParticles(){
-    isTransitioning = false;
-    txTimers.forEach(clearTimeout); txTimers.length = 0;
-    txRafs.forEach(cancelAnimationFrame); txRafs.length = 0;
-    citySprites.forEach(cs => { cs.sprite.position.copy(cs.home); cs.sprite.material.opacity = cs.baseOpacity; });
-    arcMaterials.forEach(a => { a.mat.opacity = a.baseOpacity; });
-    bgMat.opacity = 1;
-    bgGeo.attributes.position.array.set(bgHome);
-    bgGeo.attributes.position.needsUpdate = true;
-  }
-
-  // ── GSAP ScrollTrigger — pinned scroll-scrub zoom (Zentry pattern) ──
-  // The section pins at the top of the viewport; scrolling through a 300vh container
-  // scrubs the globe scale (1.0 → 2.2 / 1.6 mobile) directly. The last 30% of progress
-  // dissolves the crop + scatters the particles. On unpin, the hero StarField boosts.
-  const SCALE_GAIN = isMobile ? 0.6 : 1.2;   // 1.0 → 1.6 (mobile) / 2.2 (desktop)
-  const SCRUB      = isMobile ? 0.8 : 1.2;
-
-  // the overlay copy ("Real connections" / tagline) rides the same scrub — it fades +
-  // drifts up + blurs out over the first 70% of progress, clearing before the dissolve.
-  // Driven on the .globe-moment-copy CONTAINER (no .reveal transition to fight the scrub);
-  // the per-line load blur-in on the .reveal spans is untouched. Cleared at p≈0 so the
-  // load entrance + reverse-scrub both restore cleanly.
-  const copyEl = section.querySelector('.globe-moment-copy');
-  function driveCopy(p, motion){
-    if(!copyEl) return;
-    if(p <= 0.001){ copyEl.style.opacity = ''; copyEl.style.transform = ''; copyEl.style.filter = ''; return; }
-    const cp = Math.min(p / 0.7, 1);
-    copyEl.style.opacity = String(1 - cp);
-    if(motion){
-      copyEl.style.transform = `translateY(${cp * -40}px)`;
-      copyEl.style.filter    = `blur(${cp * 8}px)`;
-    }
-  }
-
-  // ── Co-located crossfade: the hero shares #globe-hero-wrapper with the globe and is
-  // positioned ABSOLUTE at top:0 (behind the globe, z-index 0) for the pinned experience,
-  // so it's always in the same place as the globe — when the pin releases the hero is
-  // already there, no scroll-distance to travel (zero gap). The hero StarField (NetField)
-  // is always-on from page load (window.__heroNetField), already rendering for the crossfade.
-  // NOTE: only done in the GSAP-pinned path — in the reduced-motion / no-GSAP fallback the
-  // hero stays in normal flow right below the globe (also gap-free).
-  const heroEl  = document.getElementById('hero');
-  const wrapper = document.getElementById('globe-hero-wrapper');
-
-  if(window.gsap && window.ScrollTrigger && wrapper){
-    gsap.registerPlugin(ScrollTrigger);
-
-    // pre-position the hero NOW (before init) so it never flashes in normal flow on load
-    if(!noMotion && heroEl){
-      Object.assign(heroEl.style, { position:'absolute', top:'0', left:'0', width:'100%', zIndex:'0', opacity:'0' });
-    }
-
-    // hero is now position:absolute → contributes 0 height to the wrapper, so on
-    // narrow/tall viewports (where hero's stacked form content is much taller than
-    // the globe's 100vh) #why would start overlapping hero's lower content. Keep a
-    // dedicated spacer (NOT the wrapper itself — touching the wrapper's own height
-    // would also inflate GSAP's pin-spacer and change the scroll-distance/feel of
-    // the dissolve) sized to exactly cover that overflow.
-    const overflowSpacer = document.getElementById('hero-overflow-spacer');
-    function syncHeroOverflowSpacer(){
-      if(noMotion || !heroEl || !overflowSpacer) return;
-      // hero (position:absolute, top:0 within the wrapper) renders starting at the
-      // same document position where the WRAPPER's own natural box begins post-pin —
-      // the wrapper's natural box is exactly section's height (hero contributes 0 to
-      // it). So hero only needs extra room for the amount by which it's TALLER than
-      // that natural box, not its full height.
-      // NOTE: use getBoundingClientRect(), not scrollHeight — the NetField canvas
-      // inside hero overflows hero's own box, which inflates scrollHeight to ~2x
-      // hero's true layout height. getBoundingClientRect() reflects hero's own
-      // CSS-computed box (it has overflow:clip), unaffected by that overflow.
-      const gap = heroEl.getBoundingClientRect().height - section.offsetHeight;
-      overflowSpacer.style.height = (gap > 0 ? gap : 0) + 'px';
-    }
-    syncHeroOverflowSpacer();
-    new ResizeObserver(syncHeroOverflowSpacer).observe(heroEl);
-    window.addEventListener('resize', syncHeroOverflowSpacer);
-    if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeroOverflowSpacer);
-
-    function buildScrollTrigger(){
-      if(noMotion){
-        // reduced motion: NO pin, hero stays in normal flow below the globe — just crossfade
-        // the crop out as the globe scrolls past; the hero is right there underneath.
-        ScrollTrigger.create({
-          trigger: section, start: 'top top', end: '+=100%', scrub: true,
-          onUpdate: self => { cropEl.style.opacity = String(1 - self.progress); driveCopy(self.progress, false); },
-          onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
-        });
-      } else {
-        // pin the WRAPPER (not the globe section) so the spacer accounts for both together
-        ScrollTrigger.create({
-          trigger: wrapper,
-          start: 'top top',
-          end: isMobile ? '+=80%' : '+=120%',   // pin length / zoom duration
-          pin: wrapper,
-          scrub: SCRUB,           // scroll drives the animation directly, smoothed
-          onUpdate: self => {
-            const p = self.progress;
-            visible = true;       // keep the render loop alive throughout the pin
-            // drive the zoom toward the NYC hub
-            cropEl.style.transform = `scale(${1 + p * SCALE_GAIN})`;
-            driveCopy(p, true);   // overlay copy fades + drifts up + blurs out with the scrub
-            // dissolve in the final ~22% — globe stays visible/zooming longer, then a quick
-            // fade. The hero crossfades in BEHIND the globe (inverse opacity) so there's no
-            // black: globe 1→0 while hero 0→1, completing exactly at pin-release.
-            if(p > 0.78){
-              const d = (p - 0.78) / 0.22;
-              cropEl.style.opacity = String(1 - d);
-              cropEl.style.filter  = `blur(${(d * 14).toFixed(2)}px)`;
-              if(heroEl) heroEl.style.opacity = String(d);     // crossfade hero in
-              if(!scatterFired){ scatterParticles(); scatterFired = true; }
-              // wait for the dissolve to fully finish, then hold for a beat so the
-              // entrance reads as its own moment rather than blending into the fade
-              if(p >= 0.999 && !dissolveDone){
-                dissolveDone = true;
-                heroEntranceTimer = setTimeout(() => {
-                  if(window.__triggerHeroEntrance) window.__triggerHeroEntrance();
-                }, 800);
-              }
-            } else {
-              cropEl.style.opacity = '1';
-              cropEl.style.filter  = '';
-              if(heroEl) heroEl.style.opacity = '0';           // hero hidden behind the opaque globe
-              if(scatterFired){ restoreParticles(); scatterFired = false; }   // scrubbed back up
-              if(dissolveDone){
-                dissolveDone = false;
-                if(heroEntranceTimer){ clearTimeout(heroEntranceTimer); heroEntranceTimer = null; }
-              }
-            }
-          },
-          onLeave: () => { if(window.__heroNetField) window.__heroNetField.boostBrightness(1.3, 1000); }
-        });
-      }
-    }
-
-    // CRITICAL for the fresh-open dissolve: build + measure AFTER full load, not at parse.
-    // The pin range depends on element heights that aren't final until fonts (Clash Display
-    // from Fontshare), globe.png, and the Three.js canvas have all painted — measuring too
-    // early gives a zero/near-zero pin range and the dissolve never fires on first scroll.
-    function initScrollTrigger(){
-      buildScrollTrigger();
-      ScrollTrigger.refresh();           // force re-measure once everything has painted
-    }
-    if(document.readyState === 'complete') initScrollTrigger();
-    else window.addEventListener('load', initScrollTrigger, { once:true });
-
-    // fonts can change element heights after first paint → re-measure when they're ready
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(() => ScrollTrigger.refresh());
-    }
-
-    // #globe-moment is height:100vh — if the viewport height resolves late (mobile URL bar,
-    // late layout), the first measured pin range is wrong. Re-measure when its height settles.
-    let lastSecH = 0;
-    new ResizeObserver(entries => {
-      const h = entries[0].contentRect.height;
-      if(Math.abs(h - lastSecH) > 2){ lastSecH = h; if(window.ScrollTrigger) ScrollTrigger.refresh(); }
-    }).observe(section);
-
-    // ── Arrow-triggered dissolve scroll ──
-    // The ↓ arrow at the bottom of the globe-moment animates the real scroll
-    // position through the pinned range so the existing dissolve logic drives
-    // everything identically to a manual scroll. User can interrupt at any point.
-    const scrollHint = section.querySelector('.globe-scroll-hint');
-    function triggerArrowScroll(){
-      if(noMotion){ window.scrollTo({ top: (heroEl ? heroEl.offsetTop : window.innerHeight), behavior:'smooth' }); return; }
-      const st = ScrollTrigger.getAll().find(t => t.trigger === wrapper || t.pin === wrapper);
-      if(!st) return;
-      const endY = st.end;
-      if(endY <= 0) return;
-      const prevBehavior = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = 'auto';
-      const DUR = 3200;
-      let cancelled = false, rafId = null;
-      function stop(){
-        if(cancelled) return;
-        cancelled = true;
-        if(rafId) cancelAnimationFrame(rafId);
-        document.documentElement.style.scrollBehavior = prevBehavior;
-        ['wheel','touchstart'].forEach(evt => window.removeEventListener(evt, stop));
-      }
-      ['wheel','touchstart'].forEach(evt => window.addEventListener(evt, stop, { passive:true, once:true }));
-      const startY = window.scrollY;
-      const dist   = endY - startY;
-      const t0 = performance.now();
-      function tick(now){
-        if(cancelled) return;
-        const t = Math.min((now - t0) / DUR, 1);
-        window.scrollTo(0, startY + dist * EASE_OUT(t));
-        if(t < 1) rafId = requestAnimationFrame(tick);
-        else stop();
-      }
-      rafId = requestAnimationFrame(tick);
-    }
-    if(scrollHint){
-      scrollHint.addEventListener('click', triggerArrowScroll);
-      // reveal arrow only after intro overlay clears so it doesn't bleed below the intro on mobile
-      const showHint = () => { scrollHint.style.opacity = '1'; };
-      if(window.__introLanded) showHint();
-      else window.addEventListener('intro-landed', showHint, { once: true });
-    }
-  } else if(window.__triggerHeroEntrance){
-    // GSAP unavailable — the hero was never pre-positioned/hidden above, so there's
-    // no dissolve to wait on. Reveal its entrance content immediately.
-    window.__triggerHeroEntrance();
-  }
-  // If GSAP fails to load, no pin is created — the section simply scrolls away
-  // normally and #hero follows, so the page degrades gracefully (no error state).
-
-  // gyroscope tilt — cursor offset from section center drives the target tilt
-  if(!noMotion && !isTouch){
-    section.addEventListener('pointermove', e => {
-      const r = section.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width  - 0.5;   // -0.5 … 0.5
-      const ny = (e.clientY - r.top)  / r.height - 0.5;
-      tiltTY =  nx * 0.18;    // horizontal cursor → spin a touch left/right
-      tiltTX =  ny * 0.10;    // vertical cursor   → tip a touch up/down
-    }, { passive:true });
-    section.addEventListener('pointerleave', () => { tiltTX = 0; tiltTY = 0; }, { passive:true });
-  }
-
-  // fade the canvas in (arrives with the copy); ScrollTrigger owns it after that
-  if(noMotion){
-    canvas.style.opacity = '1';
-  } else {
-    canvas.style.transition = 'opacity 1.5s cubic-bezier(0.22,1,0.36,1)';
-    setTimeout(() => { canvas.style.opacity = '1'; }, 1700);
-  }
-
-  window.addEventListener('pagehide', disposeAll, { once:true });
 })();
 </script>
+
 </body>
 </html>
