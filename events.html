@@ -204,6 +204,30 @@
     .video-hero-poster{object-position:center 50%}
   }
 
+  /* ================= UP NEXT (flyers) ================= */
+  .upnext-section{padding:80px 0;border-top:1px solid rgba(201,168,76,.12)}
+  .upnext-section .eyebrow{display:block;margin-bottom:12px}
+  .upnext-section h3{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:32px;max-width:600px}
+  .upnext-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:700px){ .upnext-grid{grid-template-columns:1fr} }
+  .flyer-card{
+    display:block;position:relative;border-radius:16px;overflow:hidden;
+    border:1px solid var(--gold-line);background:var(--ink-2);
+    transition:border-color .3s,transform .3s;
+  }
+  .flyer-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+  .flyer-card img{display:block;width:100%;height:auto}
+  .flyer-card .flyer-cta{
+    position:absolute;left:0;right:0;bottom:0;padding:16px 18px;
+    background:linear-gradient(180deg,transparent,rgba(10,10,10,.92) 70%);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .flyer-card .flyer-cta span{
+    font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+  }
+  .flyer-card .flyer-cta .flyer-arrow{color:var(--gold);transition:transform .3s}
+  .flyer-card:hover .flyer-cta .flyer-arrow{transform:translateX(4px)}
+
   /* ================= RECAP PLAYER ================= */
   .recap-section{padding:80px 0;border-top:1px solid rgba(201,168,76,.12)}
   .recap-section .eyebrow{display:block;margin-bottom:12px}
@@ -371,6 +395,24 @@
     </a>
   </div>
   <button class="video-hero-scroll-hint" aria-label="Scroll to see more">↓</button>
+</section>
+
+<!-- UP NEXT (flyers) -->
+<section class="block upnext-section">
+  <div class="wrap">
+    <span class="eyebrow reveal">Up next</span>
+    <h3 class="reveal">Two more reasons to pull up.</h3>
+    <div class="upnext-grid reveal">
+      <a class="flyer-card" href="https://leveraging.cc/" data-track="flyer_rsvp_khari_isiah">
+        <img src="assets/flyers/khari-isiah.jpg" alt="Khari Isiah live at Culture Connect — Nov 7, 6:30-7:30PM, ONLi by tadaima, 1143 Providence St, Houston TX 77002" loading="lazy">
+        <div class="flyer-cta"><span>Free RSVP — Khari Isiah Live</span><span class="flyer-arrow">→</span></div>
+      </a>
+      <a class="flyer-card" href="https://leveraging.cc/" data-track="flyer_rsvp_culture_connect_mixer">
+        <img src="assets/flyers/culture-connect-mixer.jpg" alt="Culture Connect Fashion Industry Mixer — Sat Nov 7, 3-7:30PM, ONLi by tadaima, 1143 Providence St, Houston TX 77002" loading="lazy">
+        <div class="flyer-cta"><span>Free RSVP — Culture Connect Mixer</span><span class="flyer-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
 </section>
 
 <!-- RECAP VIDEO -->
