@@ -27,6 +27,11 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
+  /* Default the page to an 80% zoomed-out frame on desktop — mirrors a visitor
+     manually zooming out, without touching mobile's own responsive scaling. */
+  @media(min-width:861px){
+    html{zoom:0.8}
+  }
   body{
     background:var(--ink);
     color:var(--cream);
@@ -204,36 +209,51 @@
     .video-hero-poster{object-position:center 50%}
   }
 
-  /* ================= GALLERY ================= */
+  /* ================= RECAP PLAYER ================= */
+  .recap-section{padding:80px 0;border-top:1px solid rgba(201,168,76,.12)}
+  .recap-section .eyebrow{display:block;margin-bottom:12px}
+  .recap-section h3{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:32px;max-width:600px}
+  .recap-player{
+    position:relative;width:100%;max-width:900px;
+    aspect-ratio:16/9;background:#0a0a0a;border-radius:12px;
+    border:1px solid rgba(201,168,76,.18);overflow:hidden;
+  }
+  .recap-player video{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* ================= GALLERY =================
+     Masonry via CSS columns — each tile's height follows its photo's own
+     aspect ratio (img is width:100%/height:auto, never cropped), so every
+     frame shows exactly what was shot instead of being clipped to a fixed
+     cell. Column count steps down on smaller screens. */
   .gallery-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;
-    gap:16px;margin-top:48px;
+    column-count:3;column-gap:16px;margin-top:48px;
   }
   .photo-tile{
     position:relative;border-radius:16px;border:1px solid var(--gold-line);overflow:hidden;
     background:linear-gradient(155deg,var(--ink-3),var(--ink-2) 72%);
-    display:flex;align-items:center;justify-content:center;transition:border-color .3s,transform .3s;
+    display:block;break-inside:avoid;-webkit-column-break-inside:avoid;
+    margin:0 0 16px;transition:border-color .3s,transform .3s;
   }
   .photo-tile:hover{border-color:var(--gold);transform:translateY(-3px)}
-  .photo-tile .tile-slot-label{
-    font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
-    color:var(--cream-faint);display:flex;align-items:center;gap:8px;
+  .photo-tile img{
+    display:block;width:100%;height:auto;
+    transform:scale(1.01);transition:transform .6s var(--ease);
   }
-  .photo-tile .tile-slot-label::before{
-    content:"";width:7px;height:7px;border-radius:50%;border:1px solid var(--gold-line);
+  .photo-tile:hover img{transform:scale(1.04)}
+  .photo-tile .tile-caption{
+    position:absolute;left:0;right:0;bottom:0;z-index:2;
+    padding:18px 16px 14px;
+    background:linear-gradient(180deg,transparent,rgba(10,10,10,.88) 70%);
+    font-size:12px;letter-spacing:.03em;line-height:1.4;color:var(--cream);
+    transform:translateY(60%);opacity:0;
+    transition:transform .35s var(--ease),opacity .35s var(--ease);
   }
-  .photo-tile:hover .tile-slot-label{opacity:0}
-  /* varied spans for a non-uniform grid */
-  .photo-tile.t-wide{grid-column:span 2}
-  .photo-tile.t-tall{grid-row:span 2}
-  .photo-tile.t-big{grid-column:span 2;grid-row:span 2}
+  .photo-tile:hover .tile-caption{transform:translateY(0);opacity:1}
   @media(max-width:860px){
-    .gallery-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:130px}
-    .photo-tile.t-big{grid-column:span 2;grid-row:span 2}
+    .gallery-grid{column-count:2}
   }
   @media(max-width:560px){
-    .gallery-grid{grid-template-columns:1fr;grid-auto-rows:170px}
-    .photo-tile.t-wide,.photo-tile.t-big{grid-column:span 1}
+    .gallery-grid{column-count:1}
   }
 
   /* ================= STATS ================= */
@@ -358,6 +378,17 @@
   <button class="video-hero-scroll-hint" aria-label="Scroll to see more">↓</button>
 </section>
 
+<!-- RECAP VIDEO -->
+<section class="block recap-section">
+  <div class="wrap">
+    <span class="eyebrow reveal">Watch the recap</span>
+    <h3 class="reveal">The room in motion — on repeat, with sound off by default.</h3>
+    <div class="recap-player reveal" id="recap-player">
+      <video src="assets/event-june/recap-full.mp4" controls playsinline preload="none" poster="assets/event-june/recap-poster.jpg"></video>
+    </div>
+  </div>
+</section>
+
 <!-- GALLERY -->
 <section class="block" id="gallery">
   <div class="wrap">
@@ -365,19 +396,21 @@
     <div style="margin-top:36px" class="reveal">
       <span class="eyebrow">The gallery</span>
       <h2 class="lead-head">Captured live, <span class="gold">straight off the floor.</span></h2>
-      <p class="body-copy">Real photos from the night are on their way in — these tiles are holding their place until they land.</p>
+      <p class="body-copy">Straight off the floor from the June meetup — more drops in as footage keeps coming.</p>
     </div>
 
     <div class="gallery-grid reveal d1">
-      <div class="photo-tile t-big" data-photo-slot="1"><span class="tile-slot-label">Photo 01</span></div>
-      <div class="photo-tile" data-photo-slot="2"><span class="tile-slot-label">Photo 02</span></div>
-      <div class="photo-tile t-tall" data-photo-slot="3"><span class="tile-slot-label">Photo 03</span></div>
-      <div class="photo-tile" data-photo-slot="4"><span class="tile-slot-label">Photo 04</span></div>
-      <div class="photo-tile t-wide" data-photo-slot="5"><span class="tile-slot-label">Photo 05</span></div>
-      <div class="photo-tile" data-photo-slot="6"><span class="tile-slot-label">Photo 06</span></div>
-      <div class="photo-tile t-tall" data-photo-slot="7"><span class="tile-slot-label">Photo 07</span></div>
-      <div class="photo-tile t-wide" data-photo-slot="8"><span class="tile-slot-label">Photo 08</span></div>
-      <div class="photo-tile" data-photo-slot="9"><span class="tile-slot-label">Photo 09</span></div>
+      <div class="photo-tile" data-photo-slot="1"><img src="assets/event-photos/event-01.jpg" width="1200" height="1800" alt="LeverageBLK founders in conversation on the retail floor" loading="lazy"><span class="tile-caption">Deep in conversation on the retail floor</span></div>
+      <div class="photo-tile" data-photo-slot="2"><img src="assets/event-photos/event-02.jpg" width="1200" height="1800" alt="Photographer capturing behind-the-scenes moments at the event" loading="lazy"><span class="tile-caption">Behind the scenes with the camera</span></div>
+      <div class="photo-tile" data-photo-slot="3"><img src="assets/event-photos/event-03.jpg" width="1200" height="1800" alt="Two attendees catching up between sets" loading="lazy"><span class="tile-caption">Catching up between sets</span></div>
+      <div class="photo-tile" data-photo-slot="4"><img src="assets/event-photos/event-04.jpg" width="1200" height="1800" alt="Attendees posing outside the venue" loading="lazy"><span class="tile-caption">Posted up and ready for the night</span></div>
+      <div class="photo-tile" data-photo-slot="5"><img src="assets/event-photos/event-05.jpg" width="1200" height="1800" alt="Guests outside the Kicking It storefront" loading="lazy"><span class="tile-caption">Outside Kicking It before doors opened</span></div>
+      <div class="photo-tile" data-photo-slot="6"><img src="assets/event-photos/event-06.jpg" width="1200" height="1800" alt="Guests seated on the showroom bench" loading="lazy"><span class="tile-caption">Taking a seat on the showroom bench</span></div>
+      <div class="photo-tile" data-photo-slot="7"><img src="assets/event-photos/event-07.jpg" width="1200" height="1800" alt="Guests in front of the LeverageBLK step-and-repeat" loading="lazy"><span class="tile-caption">Pointing out familiar faces on the step-and-repeat</span></div>
+      <div class="photo-tile" data-photo-slot="8"><img src="assets/event-photos/event-08.jpg" width="1200" height="1800" alt="Guests mid-conversation at the step-and-repeat" loading="lazy"><span class="tile-caption">Mid-conversation on the step-and-repeat</span></div>
+      <div class="photo-tile" data-photo-slot="9"><img src="assets/event-photos/event-09.jpg" width="1200" height="1800" alt="Guests smiling at the step-and-repeat" loading="lazy"><span class="tile-caption">All smiles for the step-and-repeat</span></div>
+      <div class="photo-tile" data-photo-slot="10"><img src="assets/event-photos/event-10.jpg" width="1800" height="1200" alt="Panel guests settling in before the talk" loading="lazy"><span class="tile-caption">The panel settling in before the talk</span></div>
+      <div class="photo-tile" data-photo-slot="11"><img src="assets/event-photos/event-11.jpg" width="1200" height="1800" alt="Guest browsing the sneaker wall" loading="lazy"><span class="tile-caption">Browsing the sneaker wall</span></div>
     </div>
   </div>
 </section>

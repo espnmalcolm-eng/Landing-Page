@@ -26,6 +26,11 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
+  /* Default the page to an 80% zoomed-out frame on desktop — mirrors a visitor
+     manually zooming out, without touching mobile's own responsive scaling. */
+  @media(min-width:861px){
+    html{zoom:0.8}
+  }
   body{
     background:var(--ink);
     color:var(--cream);
@@ -736,16 +741,7 @@
     <span class="eyebrow reveal">Event Recap</span>
     <h3 class="reveal">The room in motion — our last gathering.</h3>
     <div class="recap-player reveal" id="recap-player">
-      <!-- drop recap video file into leverage-landing/ and replace placeholder below:
-           <video src="recap.mp4" controls playsinline poster="recap-thumb.jpg"></video>
-      -->
-      <div class="recap-placeholder" id="recap-placeholder">
-        <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
-          <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1.5"/>
-          <polygon points="19,15 35,24 19,33" fill="currentColor"/>
-        </svg>
-        <span>Recap video coming soon</span>
-      </div>
+      <video src="assets/event-june/recap-full.mp4" controls playsinline preload="none" poster="assets/event-june/recap-poster.jpg"></video>
     </div>
   </div>
 </section>
