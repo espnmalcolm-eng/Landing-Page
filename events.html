@@ -628,8 +628,8 @@
 </script>
 
 <!-- VIDEO HERO fallback — same autoplay/poster decision logic as index.html's
-     #video-hero script (mobile / reduced-data / reduced-motion / blocked autoplay
-     all fall back to the static poster). -->
+     #video-hero script (reduced-data / reduced-motion / blocked autoplay
+     fall back to the static poster; autoplays on mobile too). -->
 <script>
 (function(){
   const section = document.getElementById('video-hero');
@@ -637,7 +637,6 @@
   const video  = section.querySelector('.video-hero-media');
   const poster = section.querySelector('.video-hero-poster');
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.matchMedia('(max-width: 767px)').matches;
   const saveData = !!(navigator.connection && navigator.connection.saveData);
 
   function showPoster(){
@@ -645,7 +644,7 @@
     if(poster) poster.style.display = 'block';
   }
 
-  if(!video || noMotion || isMobile || saveData){ showPoster(); return; }
+  if(!video || noMotion || saveData){ showPoster(); return; }
 
   const playPromise = video.play();
   if(playPromise && typeof playPromise.catch === 'function'){

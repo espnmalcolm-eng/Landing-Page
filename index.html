@@ -1417,7 +1417,6 @@
   const video  = section.querySelector('.video-hero-media');
   const poster = section.querySelector('.video-hero-poster');
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.matchMedia('(max-width: 767px)').matches;
   const saveData = !!(navigator.connection && navigator.connection.saveData);
 
   function showPoster(){
@@ -1425,9 +1424,9 @@
     if(poster) poster.style.display = 'block';
   }
 
-  // mirrors the old globe-moment fallback decision: skip the dynamic version
-  // entirely on mobile, reduced-data connections, and prefers-reduced-motion
-  if(!video || noMotion || isMobile || saveData){ showPoster(); return; }
+  // loop video now autoplays on mobile too — only reduced-data connections
+  // and prefers-reduced-motion fall back to the static poster
+  if(!video || noMotion || saveData){ showPoster(); return; }
 
   // autoplay can still be blocked by the browser even when muted (rare, but
   // happens) — fall back to the static poster rather than showing a frozen
